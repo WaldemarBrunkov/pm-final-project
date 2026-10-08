@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BU Collection · Pilot roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f4f5;
+    --surface: #ffffff;
+    --border: #e4e4e7;
+    --border-strong: #d4d4d8;
+    --ink: #18181b;
+    --body: #3f3f46;
+    --muted: #71717a;
+    --faint: #a1a1aa;
+
+    --qw: #15803d;
+    --qw-bg: #ecfdf3;
+    --mp: #1d4ed8;
+    --mp-bg: #eff6ff;
+    --ts: #b91c1c;
+    --ts-bg: #fef2f2;
+    --focus: #2563eb;
+
+    --shadow: 0 1px 2px rgba(24, 24, 27, 0.04), 0 8px 20px rgba(24, 24, 27, 0.04);
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0d0d0f;
+    --surface: #18181b;
+    --border: #2b2b30;
+    --border-strong: #3f3f46;
+    --ink: #f4f4f5;
+    --body: #d4d4d8;
+    --muted: #a1a1aa;
+    --faint: #52525b;
+
+    --qw: #4ade80;
+    --qw-bg: rgba(74, 222, 128, 0.14);
+    --mp: #60a5fa;
+    --mp-bg: rgba(96, 165, 250, 0.14);
+    --ts: #f87171;
+    --ts-bg: rgba(248, 113, 113, 0.14);
+    --focus: #60a5fa;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 40px 0 72px; }
+
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  /* ---------- Header ---------- */
+
+  header { padding-bottom: 20px; }
+
+  .brand-row { display: flex; align-items: center; gap: 12px; }
+
+  .mark {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--ink); color: var(--surface);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 13px; letter-spacing: -0.02em; flex: 0 0 auto;
+  }
+
+  .eyebrow { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  h1 { margin: 2px 0 0; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .lede { max-width: 68ch; margin: 14px 0 0; font-size: 15px; color: var(--body); }
+
+  .friction {
+    margin: 16px 0 0; padding: 12px 16px;
+    border: 1px solid var(--border); border-left: 3px solid var(--ink); border-radius: 6px;
+    background: var(--surface); font-size: 14px; color: var(--body);
+  }
+  .friction b { color: var(--ink); }
+
+  .strategy {
+    margin-top: 12px; padding: 12px 16px;
+    border: 1px solid var(--border); border-radius: 6px; background: var(--surface);
+    display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: start;
+  }
+  .strategy h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  .strategy p { margin: 0; color: var(--body); font-size: 13.5px; }
+
+  /* ---------- Panel (controls) ---------- */
+
+  .panel {
+    margin: 20px 0 20px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+  }
+
+  .panel-row-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .panel-title { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.005em; white-space: nowrap; }
+
+  .panel-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-left: auto; }
+
+  .search {
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border); border-radius: 6px; padding: 6px 9px;
+    background: var(--bg); min-width: 150px;
+  }
+  .search span { font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .search input { border: 0; background: transparent; font: inherit; font-size: 13px; color: var(--ink); flex: 1; min-width: 0; outline: none; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  .filter {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .filter.qw { color: var(--qw); }
+  .filter.mp { color: var(--mp); }
+  .filter.ts { color: var(--ts); }
+  .filter[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+
+  .text-btn {
+    border: 1px solid var(--border); background: var(--bg); border-radius: 6px;
+    padding: 6px 10px; font-size: 12.5px; font-weight: 600; color: var(--body);
+    display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  }
+  .text-btn:hover, .filter:hover { border-color: var(--border-strong); }
+  .text-btn svg { width: 13px; height: 13px; }
+
+  .panel-stats { margin: 12px 0 0; font-size: 12.5px; color: var(--muted); }
+  .panel-stats b { color: var(--ink); font-weight: 600; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+  .legend-item {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 999px; padding: 4px 10px; font-size: 11.5px; font-weight: 500;
+  }
+  .legend-item b { font-weight: 700; }
+  .legend-item.qw { background: var(--qw-bg); color: var(--qw); }
+  .legend-item.mp { background: var(--mp-bg); color: var(--mp); }
+  .legend-item.ts { background: var(--ts-bg); color: var(--ts); }
+
+  /* ---------- Board ---------- */
+
+  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+
+  .lane {
+    border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+    background: var(--surface); min-height: 220px; box-shadow: var(--shadow);
+  }
+  .lane.cut { margin-top: 16px; }
+  .lane.drag-over { outline: 2px dashed var(--ink); outline-offset: -5px; }
+
+  .lane-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .lane-head h2 { margin: 1px 0 0; font-size: 15px; font-weight: 700; letter-spacing: 0.02em; }
+  .lane-sprint { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+  .count {
+    display: inline-grid; place-items: center;
+    min-width: 22px; height: 22px; padding: 0 6px;
+    border-radius: 999px; background: var(--bg); border: 1px solid var(--border);
+    font-size: 12px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+
+  .lane-note { margin: 6px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+  .load { margin: 6px 0 0; min-height: 1.4em; color: var(--body); font-size: 12.5px; font-weight: 600; }
+
+  .cards { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; min-height: 60px; }
+  .lane.cut .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+
+  /* ---------- Card ---------- */
+
+  .card { border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: var(--surface); }
+  .card.dragging { opacity: 0.4; }
+  .card.insert-before { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .card-top { display: flex; align-items: flex-start; gap: 8px; }
+  .card-top h3 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.005em; line-height: 1.3; flex: 1; }
+  .fid { font-size: 11px; font-weight: 700; color: var(--faint); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto;
+    font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 3px 8px; white-space: nowrap;
+  }
+  .badge.qw { color: var(--qw); background: var(--qw-bg); }
+  .badge.mp { color: var(--mp); background: var(--mp-bg); }
+  .badge.ts { color: var(--ts); background: var(--ts-bg); }
+
+  .cluster-tag {
+    display: inline-block; margin: 6px 0 0; font-size: 10.5px; font-weight: 600; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 999px; padding: 2px 7px;
+  }
+
+  .rationale { margin: 6px 0 0; color: var(--body); font-size: 13px; line-height: 1.5; }
+
+  .card-foot {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--border);
+  }
+
+  .metrics { display: flex; flex-wrap: wrap; gap: 12px; margin-right: auto; }
+  .metric { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; color: var(--muted); }
+  .metric b { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .pips { display: inline-flex; gap: 3px; }
+  .pips i { width: 7px; height: 7px; border-radius: 50%; display: block; box-sizing: border-box; border: 1.4px solid var(--border-strong); background: transparent; }
+  .metric.value .pips i.on { background: var(--ink); border-color: var(--ink); }
+  .metric.effort .pips i.on { background: var(--faint); border-color: var(--faint); }
+
+  .card-controls { display: inline-flex; align-items: center; gap: 6px; }
+
+  .icon-btn {
+    border: 1px solid var(--border); background: var(--bg); border-radius: 6px;
+    width: 26px; height: 26px; display: grid; place-items: center; color: var(--muted); flex: 0 0 auto;
+  }
+  .icon-btn:hover { border-color: var(--border-strong); color: var(--ink); }
+  .icon-btn svg { width: 13px; height: 13px; }
+
+  .lane-select {
+    font: inherit; font-size: 11.5px; font-weight: 600; color: var(--ink);
+    border: 1px solid var(--border); border-radius: 6px; padding: 5px 7px; background: var(--bg);
+  }
+
+  .cut-btn {
+    border: 1px solid var(--border); background: var(--bg); border-radius: 6px;
+    padding: 5px 9px; font-size: 11.5px; font-weight: 600; color: var(--ts);
+  }
+  .cut-btn:hover { background: var(--ts-bg); border-color: var(--ts); }
+
+  .empty {
+    margin: 0; padding: 16px 10px; border: 1px dashed var(--border-strong); border-radius: 6px;
+    color: var(--muted); font-size: 13px; text-align: center;
+  }
+
+  .colophon { margin: 20px 0 0; color: var(--muted); font-size: 12.5px; }
+
+  .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  /* ---------- Editor dialog ---------- */
+
+  dialog#editor {
+    border: 1px solid var(--border); border-radius: 10px; padding: 0;
+    width: min(520px, calc(100vw - 32px)); color: var(--ink); background: var(--surface);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  }
+  dialog#editor::backdrop { background: rgba(0, 0, 0, 0.45); }
+
+  .editor-head { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--border); }
+  .editor-head p { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .editor-head h2 { margin: 1px 0 0; font-size: 16px; font-weight: 700; }
+  .editor-head .icon-btn { margin-left: auto; }
+
+  .editor-body { padding: 16px 18px; display: grid; gap: 14px; max-height: 70vh; overflow: auto; }
+
+  .field { display: grid; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--body); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .field input[type="text"], .field select, .field textarea {
+    font: inherit; font-size: 14px; border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; color: var(--ink); background: var(--surface); width: 100%;
+  }
+  .field textarea { resize: vertical; min-height: 72px; line-height: 1.45; }
+
+  .range-row { display: flex; align-items: center; gap: 10px; }
+  .range-row input[type="range"] { flex: 1; accent-color: var(--ink); }
+  .range-row output { min-width: 22px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; }
+
+  .quad-preview { font-size: 11px; }
+
+  .editor-foot { display: flex; align-items: center; gap: 8px; justify-content: flex-end; padding: 14px 18px; border-top: 1px solid var(--border); }
+
+  .btn {
+    border-radius: 6px; padding: 8px 14px; font-size: 13.5px; font-weight: 600;
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+  }
+  .btn.primary { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+  .btn:hover { border-color: var(--border-strong); }
+  .btn.primary:hover { opacity: 0.9; }
+
+  @media (max-width: 980px) {
+    .board { grid-template-columns: 1fr; }
+    .strategy { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    .panel-controls { margin-left: 0; width: 100%; }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .panel-controls, .icon-btn, .cut-btn, .lane-select, .colophon, dialog { display: none !important; }
+    .board { display: block; }
+    .lane { margin-bottom: 12px; break-inside: avoid; box-shadow: none; }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand-row">
+        <div class="mark" aria-hidden="true">BU</div>
+        <div>
+          <p class="eyebrow">Pilot roadmap</p>
+          <h1>BU Collection</h1>
+        </div>
+      </div>
+      <p class="lede">Four engineers and one designer, aimed at one friction: knowing whether a repayment plan is affordable, and what happens if it is wrong.</p>
+      <p class="friction">“<b>I don’t know whether I can afford this repayment plan or what happens if I get it wrong.</b>”</p>
+      <div class="strategy">
+        <h2>One experience</h2>
+        <p>Features #1, #3, #5, and #9 are a single Guided Plan Selection. NOW opens it at the moment of commitment; NEXT completes it. Sustainable default is its own bet, protecting the missed-payment guardrail on the fastest path.</p>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="panel-row-top">
+        <h2 class="panel-title">BU Collection · Roadmap</h2>
+        <div class="panel-controls">
+          <label class="search">
+            <span>Search</span>
+            <input id="q" type="search" placeholder="Name or rationale" autocomplete="off">
+          </label>
+          <div class="filters" role="group" aria-label="Filter by quadrant">
+            <button type="button" class="filter" data-quad="all" aria-pressed="true">All</button>
+            <button type="button" class="filter qw" data-quad="Quick Win" aria-pressed="false">Quick Win</button>
+            <button type="button" class="filter mp" data-quad="Major Project" aria-pressed="false">Major Project</button>
+            <button type="button" class="filter ts" data-quad="Time Sinker" aria-pressed="false">Time Sinker</button>
+          </div>
+          <button type="button" class="text-btn" id="theme-toggle" aria-pressed="false">
+            <svg id="theme-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5v2M8 12.5v2M2.6 2.6l1.4 1.4M12 12l1.4 1.4M1.5 8h2M12.5 8h2M2.6 13.4l1.4-1.4M12 4l1.4-1.4"/><circle cx="8" cy="8" r="3.2"/></svg>
+            <span>Theme</span>
+          </button>
+          <button type="button" class="text-btn" id="restore">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 8A5 5 0 1 1 11.5 4.3M13 1.5V5h-3.5"/></svg>
+            <span>Reset</span>
+          </button>
+        </div>
+      </div>
+      <p class="panel-stats" id="panel-stats"></p>
+      <div class="legend">
+        <span class="legend-item qw"><b>Quick Win</b> high impact · low effort</span>
+        <span class="legend-item mp"><b>Major Project</b> high impact · high effort</span>
+        <span class="legend-item ts"><b>Time Sinker</b> low impact · high effort</span>
+      </div>
+    </section>
+
+    <div class="board" id="board">
+      <section class="lane now" data-lane="now" aria-labelledby="now-title">
+        <div class="lane-head">
+          <div>
+            <p class="lane-sprint">Current 2-week sprint</p>
+            <h2 id="now-title">NOW</h2>
+          </div>
+          <span class="count" data-count="now"></span>
+        </div>
+        <p class="lane-note">Sized for four engineers and one designer across one two-week sprint.</p>
+        <p class="load" id="now-load"></p>
+        <div class="cards"></div>
+      </section>
+
+      <section class="lane next" data-lane="next" aria-labelledby="next-title">
+        <div class="lane-head">
+          <div>
+            <p class="lane-sprint">Following 1–2 sprints</p>
+            <h2 id="next-title">NEXT</h2>
+          </div>
+          <span class="count" data-count="next"></span>
+        </div>
+        <p class="lane-note">Completes Guided Plan Selection.</p>
+        <p class="load" id="next-load"></p>
+        <div class="cards"></div>
+      </section>
+
+      <section class="lane later" data-lane="later" aria-labelledby="later-title">
+        <div class="lane-head">
+          <div>
+            <p class="lane-sprint">Backlog</p>
+            <h2 id="later-title">LATER</h2>
+          </div>
+          <span class="count" data-count="later"></span>
+        </div>
+        <p class="lane-note">Needs repayment rules, eligibility, or payment processing beyond the pilot.</p>
+        <p class="load" id="later-load"></p>
+        <div class="cards"></div>
+      </section>
+    </div>
+
+    <section class="lane cut" data-lane="cut" aria-labelledby="cut-title">
+      <div class="lane-head">
+        <div>
+          <p class="lane-sprint">Out of the pilot</p>
+          <h2 id="cut-title">Cut List</h2>
+        </div>
+        <span class="count" data-count="cut"></span>
+      </div>
+      <p class="lane-note">Reopen a cut only if simpler bets miss both the primary metric and the guardrail.</p>
+      <div class="cards"></div>
+    </section>
+
+    <p class="colophon">Drag a card to restage it, use the Lane dropdown or Cut for a quick move, or open the pencil icon to edit every field. Theme and board state are remembered in this browser.</p>
+  </div>
+
+  <dialog id="editor" aria-labelledby="editor-title">
+    <form method="dialog" id="editor-form">
+      <div class="editor-head">
+        <div>
+          <p>Edit feature</p>
+          <h2 id="editor-title">#<span id="editor-fid">0</span></h2>
+        </div>
+        <button type="button" class="icon-btn" id="editor-close" aria-label="Close editor">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3l10 10M13 3L3 13"/></svg>
+        </button>
+      </div>
+      <div class="editor-body">
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" required maxlength="80">
+        </div>
+        <div class="field">
+          <label for="f-rationale">Rationale</label>
+          <textarea id="f-rationale" name="rationale" required maxlength="400"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-value">Value <span aria-hidden="true">(1–5)</span></label>
+            <div class="range-row">
+              <input id="f-value" name="value" type="range" min="1" max="5" step="1">
+              <output id="f-value-out">1</output>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-effort">Effort <span aria-hidden="true">(1–5)</span></label>
+            <div class="range-row">
+              <input id="f-effort" name="effort" type="range" min="1" max="5" step="1">
+              <output id="f-effort-out">1</output>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-quadrant">Quadrant</label>
+            <select id="f-quadrant" name="quadrant">
+              <option value="Quick Win">Quick Win</option>
+              <option value="Major Project">Major Project</option>
+              <option value="Time Sinker">Time Sinker</option>
+            </select>
+            <span class="quad-preview badge qw" id="f-quadrant-preview">Quick Win</span>
+          </div>
+          <div class="field">
+            <label for="f-lane">Lane</label>
+            <select id="f-lane" name="lane">
+              <option value="now">Now</option>
+              <option value="next">Next</option>
+              <option value="later">Later</option>
+              <option value="cut">Cut list</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-cluster">Cluster <span aria-hidden="true">(optional)</span></label>
+          <input id="f-cluster" name="cluster" type="text" maxlength="60" placeholder="e.g. Guided Plan Selection">
+        </div>
+      </div>
+      <div class="editor-foot">
+        <button type="button" class="btn" id="editor-cancel">Cancel</button>
+        <button type="submit" class="btn primary" id="editor-save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <p id="status" class="sr" aria-live="polite"></p>
+  <noscript><p class="lede">Enable JavaScript to see the roadmap.</p></noscript>
+
+<script>
+(function () {
+  var DEFAULT_FEATURES = [
+    { id: 1, name: "Guided 60-second chooser", value: 5, effort: 3, quadrant: "Quick Win", cluster: "Guided Plan Selection", rationale: "Directly addresses the largest drop-off (26.8%) by reducing uncertainty at the affordability step while remaining feasible within a pilot." },
+    { id: 2, name: "Sustainable default", value: 5, effort: 2, quadrant: "Quick Win", cluster: "", rationale: "Improves the fastest decision path while protecting the guardrail, as consumers accepting the default currently have the highest missed-payment rate." },
+    { id: 3, name: "Low-month confidence check", value: 5, effort: 2, quadrant: "Quick Win", cluster: "Guided Plan Selection", rationale: "Tackles the Moment of Misery immediately before commitment by helping consumers validate that they can afford the plan even in a weaker month." },
+    { id: 4, name: "Income-uncertainty buffer", value: 4, effort: 5, quadrant: "Major Project", cluster: "", rationale: "Strong fit for the persona but requires significant changes to repayment logic, eligibility rules, and backend systems." },
+    { id: 5, name: "Two-plan comparison", value: 4, effort: 2, quadrant: "Quick Win", cluster: "Guided Plan Selection", rationale: "Reduces decision anxiety by presenting only two clear, understandable repayment options instead of an open-ended choice." },
+    { id: 6, name: "Payday alignment", value: 4, effort: 4, quadrant: "Major Project", cluster: "", rationale: "Addresses a genuine affordability issue for consumers with irregular income but requires deeper scheduling and payment-processing changes." },
+    { id: 7, name: "Agent answers in the journey", value: 4, effort: 2, quadrant: "Quick Win", cluster: "", rationale: "Replaces reassurance calls with clear guidance at the point of decision, directly supporting the primary metric." },
+    { id: 8, name: "First-payment trial", value: 3, effort: 5, quadrant: "Time Sinker", cluster: "", rationale: "Could improve long-term sustainability but fundamentally changes the repayment model, making it too complex for a pilot." },
+    { id: 9, name: "One-tap safer alternative", value: 5, effort: 2, quadrant: "Quick Win", cluster: "", rationale: "Intercepts hesitation at the critical decision point and offers a safer option without forcing the consumer through another form." },
+    { id: 10, name: "Fix-without-an-agent window", value: 3, effort: 4, quadrant: "Major Project", cluster: "", rationale: "Reduces post-agreement agent contacts but has only an indirect impact on the core friction before commitment." }
+  ];
+
+  var DEFAULT_LANES = { now: [2, 3, 9], next: [1, 5, 7], later: [6, 4, 10], cut: [8] };
+  var LANE_LABEL = { now: "Now", next: "Next", later: "Later", cut: "Cut list" };
+  var QUAD = { "Quick Win": "qw", "Major Project": "mp", "Time Sinker": "ts" };
+  var KEY = "bu-collection-roadmap-v2";
+  var THEME_KEY = "bu-collection-roadmap-theme";
+
+  var state = load() || { features: cloneFeatures(DEFAULT_FEATURES), lanes: clone(DEFAULT_LANES) };
+  var quad = "all";
+  var query = "";
+  var editingId = null;
+
+  function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
+  function cloneFeatures(list) {
+    var map = {};
+    list.forEach(function (f) { map[f.id] = clone(f); });
+    return map;
+  }
+
+  function load() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (!saved || !saved.features || !saved.lanes) return null;
+      var keys = ["now", "next", "later", "cut"];
+      if (!keys.every(function (k) { return Array.isArray(saved.lanes[k]); })) return null;
+      var allIds = keys.reduce(function (acc, k) { return acc.concat(saved.lanes[k].map(Number)); }, []);
+      var uniq = {};
+      allIds.forEach(function (n) { uniq[n] = true; });
+      if (allIds.length !== 10 || Object.keys(uniq).length !== 10) return null;
+
+      var features = {};
+      for (var i = 1; i <= 10; i++) {
+        var f = saved.features[i];
+        if (!f || typeof f.name !== "string" || typeof f.rationale !== "string") return null;
+        var value = clampInt(f.value, 1, 5);
+        var effort = clampInt(f.effort, 1, 5);
+        var quadrant = QUAD[f.quadrant] ? f.quadrant : "Quick Win";
+        features[i] = {
+          id: i,
+          name: String(f.name).slice(0, 80) || ("Feature " + i),
+          rationale: String(f.rationale).slice(0, 400),
+          value: value,
+          effort: effort,
+          quadrant: quadrant,
+          cluster: typeof f.cluster === "string" ? f.cluster.slice(0, 60) : ""
+        };
+      }
+      var lanes = {};
+      keys.forEach(function (k) { lanes[k] = saved.lanes[k].map(Number); });
+      return { features: features, lanes: lanes };
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function clampInt(n, min, max) {
+    n = Math.round(Number(n));
+    if (isNaN(n)) return min;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (err) {}
+  }
+
+  function laneOf(id) {
+    var found = "cut";
+    Object.keys(state.lanes).forEach(function (key) {
+      if (state.lanes[key].indexOf(id) !== -1) found = key;
+    });
+    return found;
+  }
+
+  function effortOf(ids) {
+    return ids.reduce(function (sum, id) { return sum + state.features[id].effort; }, 0);
+  }
+
+  function matches(feature) {
+    if (quad !== "all" && feature.quadrant !== quad) return false;
+    var hay = (feature.name + " " + feature.rationale + " " + feature.quadrant + " " + feature.cluster).toLowerCase();
+    return hay.indexOf(query.trim().toLowerCase()) !== -1;
+  }
+
+  function filtering() { return quad !== "all" || query.trim() !== ""; }
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function pips(kind, label, value) {
+    var wrap = el("span", "metric " + kind);
+    wrap.appendChild(el("span", null, label));
+    wrap.appendChild(el("b", null, String(value)));
+    var row = el("span", "pips");
+    row.setAttribute("aria-hidden", "true");
+    for (var i = 1; i <= 5; i++) row.appendChild(el("i", i <= value ? "on" : ""));
+    wrap.appendChild(row);
+    wrap.setAttribute("aria-label", label + " " + value + " of 5");
+    return wrap;
+  }
+
+  function card(feature, lane) {
+    var node = el("article", "card");
+    node.dataset.id = String(feature.id);
+    node.draggable = true;
+
+    var top = el("div", "card-top");
+    top.appendChild(el("span", "fid", "#" + feature.id));
+    top.appendChild(el("h3", null, feature.name));
+    top.appendChild(el("span", "badge " + QUAD[feature.quadrant], feature.quadrant));
+    node.appendChild(top);
+
+    if (feature.cluster) node.appendChild(el("span", "cluster-tag", feature.cluster));
+    node.appendChild(el("p", "rationale", feature.rationale));
+
+    var foot = el("div", "card-foot");
+    var metrics = el("div", "metrics");
+    metrics.appendChild(pips("value", "Impact", feature.value));
+    metrics.appendChild(pips("effort", "Effort", feature.effort));
+    foot.appendChild(metrics);
+
+    var controls = el("div", "card-controls");
+
+    var editBtn = el("button", "icon-btn");
+    editBtn.type = "button";
+    editBtn.setAttribute("aria-label", "Edit " + feature.name);
+    editBtn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M11.3 2.3a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1 0 1.4L5 13.4 2 14l.6-3L11.3 2.3z"/></svg>';
+    editBtn.addEventListener("click", function () { openEditor(feature.id); });
+    controls.appendChild(editBtn);
+
+    var select = document.createElement("select");
+    select.className = "lane-select";
+    select.setAttribute("aria-label", "Move " + feature.name);
+    Object.keys(LANE_LABEL).forEach(function (key) {
+      var opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = LANE_LABEL[key];
+      if (key === lane) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.addEventListener("mousedown", function (e) { e.stopPropagation(); });
+    select.addEventListener("change", function () {
+      if (moveTo(feature.id, select.value, null)) {
+        save();
+        render();
+        announce(feature.name + " moved to " + LANE_LABEL[select.value] + ".");
+      }
+    });
+    controls.appendChild(select);
+
+    if (lane !== "cut") {
+      var cutBtn = el("button", "cut-btn", "Cut");
+      cutBtn.type = "button";
+      cutBtn.setAttribute("aria-label", "Cut " + feature.name);
+      cutBtn.addEventListener("click", function () {
+        if (moveTo(feature.id, "cut", null)) {
+          save();
+          render();
+          announce(feature.name + " moved to Cut list.");
+        }
+      });
+      controls.appendChild(cutBtn);
+    }
+
+    foot.appendChild(controls);
+    node.appendChild(foot);
+    return node;
+  }
+
+  function render() {
+    ["now", "next", "later", "cut"].forEach(function (lane) {
+      var section = document.querySelector('[data-lane="' + lane + '"]');
+      var box = section.querySelector(".cards");
+      var ids = state.lanes[lane];
+      var visible = ids.filter(function (id) { return matches(state.features[id]); });
+      box.textContent = "";
+      if (!visible.length) {
+        box.appendChild(el("p", "empty", ids.length && filtering() ? "Nothing in this lane matches." : "Drop a feature here."));
+      } else {
+        visible.forEach(function (id) { box.appendChild(card(state.features[id], lane)); });
+      }
+      var count = section.querySelector("[data-count]");
+      count.textContent = filtering() && visible.length !== ids.length ? visible.length + " of " + ids.length : String(ids.length);
+    });
+
+    var nowEffort = effortOf(state.lanes.now);
+    var nowFit = "Fits this sprint";
+    if (!state.lanes.now.length) nowFit = "Sprint is clear";
+    else if (nowEffort < 5) nowFit = "Light for this squad";
+    else if (nowEffort > 8) nowFit = "Over a two-week load";
+    document.getElementById("now-load").textContent = countLabel(state.lanes.now.length) + " · effort " + nowEffort + " · " + nowFit;
+
+    var nextEffort = effortOf(state.lanes.next);
+    var nextFit = nextEffort > 12 ? "Tight even across two sprints" : "Room across the next 1–2 sprints";
+    document.getElementById("next-load").textContent = countLabel(state.lanes.next.length) + " · effort " + nextEffort + " · " + nextFit;
+
+    document.getElementById("later-load").textContent = countLabel(state.lanes.later.length) + " · effort " + effortOf(state.lanes.later);
+
+    document.getElementById("panel-stats").innerHTML =
+      "Team: <b>4 engineers + 1 designer</b> · <b>" + state.lanes.now.length + "</b> now · <b>" +
+      state.lanes.next.length + "</b> next · <b>" + state.lanes.later.length + "</b> later · <b>" +
+      state.lanes.cut.length + "</b> cut";
+  }
+
+  function countLabel(n) { return n + (n === 1 ? " feature" : " features"); }
+
+  function moveTo(id, toLane, beforeId) {
+    id = Number(id);
+    if (!state.features[id] || !state.lanes[toLane]) return false;
+    beforeId = beforeId == null || beforeId === "" ? null : Number(beforeId);
+    if (beforeId === id) return false;
+    Object.keys(state.lanes).forEach(function (key) {
+      state.lanes[key] = state.lanes[key].filter(function (item) { return item !== id; });
+    });
+    var list = state.lanes[toLane];
+    var idx = beforeId == null ? -1 : list.indexOf(beforeId);
+    if (idx >= 0) list.splice(idx, 0, id);
+    else list.push(id);
+    return true;
+  }
+
+  function announce(text) { document.getElementById("status").textContent = text; }
+
+  /* ---------- Theme ---------- */
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("theme-toggle").setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  }
+
+  function initTheme() {
+    var saved = null;
+    try { saved = localStorage.getItem(THEME_KEY); } catch (err) {}
+    if (saved !== "light" && saved !== "dark") {
+      saved = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    applyTheme(saved);
+  }
+
+  document.getElementById("theme-toggle").addEventListener("click", function () {
+    var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    applyTheme(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (err) {}
+    announce(next === "dark" ? "Dark theme enabled." : "Light theme enabled.");
+  });
+
+  /* ---------- Editor ---------- */
+
+  var dialog = document.getElementById("editor");
+  var form = document.getElementById("editor-form");
+  var fName = document.getElementById("f-name");
+  var fRationale = document.getElementById("f-rationale");
+  var fValue = document.getElementById("f-value");
+  var fValueOut = document.getElementById("f-value-out");
+  var fEffort = document.getElementById("f-effort");
+  var fEffortOut = document.getElementById("f-effort-out");
+  var fQuadrant = document.getElementById("f-quadrant");
+  var fQuadrantPreview = document.getElementById("f-quadrant-preview");
+  var fLane = document.getElementById("f-lane");
+  var fCluster = document.getElementById("f-cluster");
+
+  function updateQuadrantPreview() {
+    var q = fQuadrant.value;
+    fQuadrantPreview.textContent = q;
+    fQuadrantPreview.className = "quad-preview badge " + QUAD[q];
+  }
+
+  function openEditor(id) {
+    var feature = state.features[id];
+    if (!feature) return;
+    editingId = id;
+    document.getElementById("editor-fid").textContent = String(id);
+    fName.value = feature.name;
+    fRationale.value = feature.rationale;
+    fValue.value = String(feature.value);
+    fValueOut.textContent = String(feature.value);
+    fEffort.value = String(feature.effort);
+    fEffortOut.textContent = String(feature.effort);
+    fQuadrant.value = feature.quadrant;
+    updateQuadrantPreview();
+    fLane.value = laneOf(id);
+    fCluster.value = feature.cluster || "";
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+    fName.focus();
+  }
+
+  function closeEditor() {
+    editingId = null;
+    if (dialog.open) dialog.close();
+  }
+
+  fValue.addEventListener("input", function () { fValueOut.textContent = fValue.value; });
+  fEffort.addEventListener("input", function () { fEffortOut.textContent = fEffort.value; });
+  fQuadrant.addEventListener("change", updateQuadrantPreview);
+
+  document.getElementById("editor-close").addEventListener("click", closeEditor);
+  document.getElementById("editor-cancel").addEventListener("click", closeEditor);
+
+  dialog.addEventListener("cancel", function () { editingId = null; });
+  dialog.addEventListener("click", function (e) { if (e.target === dialog) closeEditor(); });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (editingId == null) return;
+    var feature = state.features[editingId];
+    var name = fName.value.trim();
+    var rationale = fRationale.value.trim();
+    if (!name || !rationale) {
+      announce("Name and rationale are required.");
+      return;
+    }
+    feature.name = name.slice(0, 80);
+    feature.rationale = rationale.slice(0, 400);
+    feature.value = clampInt(fValue.value, 1, 5);
+    feature.effort = clampInt(fEffort.value, 1, 5);
+    feature.quadrant = QUAD[fQuadrant.value] ? fQuadrant.value : "Quick Win";
+    feature.cluster = fCluster.value.trim().slice(0, 60);
+    moveTo(feature.id, fLane.value, null);
+    save();
+    render();
+    closeEditor();
+    announce(feature.name + " updated.");
+  });
+
+  /* ---------- Drag and drop ---------- */
+
+  function from(target, sel) {
+    var node = target && target.nodeType === 1 ? target : (target && target.parentElement);
+    return node && node.closest ? node.closest(sel) : null;
+  }
+
+  function clearDrag() {
+    document.querySelectorAll(".drag-over, .insert-before, .dragging").forEach(function (node) {
+      node.classList.remove("drag-over", "insert-before", "dragging");
+    });
+  }
+
+  var wrap = document.querySelector(".wrap");
+
+  wrap.addEventListener("dragstart", function (e) {
+    if (from(e.target, "button") || from(e.target, "select")) { e.preventDefault(); return; }
+    var item = from(e.target, ".card");
+    if (!item) return;
+    e.dataTransfer.setData("text/plain", item.dataset.id);
+    e.dataTransfer.effectAllowed = "move";
+    item.classList.add("dragging");
+  });
+
+  wrap.addEventListener("dragover", function (e) {
+    var zone = from(e.target, "[data-lane]");
+    if (!zone) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    document.querySelectorAll(".drag-over").forEach(function (n) { n.classList.remove("drag-over"); });
+    document.querySelectorAll(".insert-before").forEach(function (n) { n.classList.remove("insert-before"); });
+    zone.classList.add("drag-over");
+    var item = from(e.target, ".card");
+    if (item) item.classList.add("insert-before");
+  });
+
+  wrap.addEventListener("drop", function (e) {
+    var zone = from(e.target, "[data-lane]");
+    if (!zone) return;
+    e.preventDefault();
+    var id = e.dataTransfer.getData("text/plain");
+    var item = from(e.target, ".card");
+    var beforeId = item ? item.dataset.id : null;
+    if (moveTo(id, zone.dataset.lane, beforeId)) {
+      save();
+      render();
+      var feature = state.features[Number(id)];
+      if (feature) announce(feature.name + " moved to " + LANE_LABEL[zone.dataset.lane] + ".");
+    }
+    clearDrag();
+  });
+
+  document.addEventListener("dragend", clearDrag);
+
+  /* ---------- Toolbar ---------- */
+
+  document.getElementById("q").addEventListener("input", function (e) {
+    query = e.target.value;
+    render();
+  });
+
+  document.querySelectorAll(".filter").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      quad = btn.dataset.quad;
+      document.querySelectorAll(".filter").forEach(function (other) {
+        other.setAttribute("aria-pressed", other === btn ? "true" : "false");
+      });
+      render();
+    });
+  });
+
+  document.getElementById("restore").addEventListener("click", function () {
+    localStorage.removeItem(KEY);
+    state = { features: cloneFeatures(DEFAULT_FEATURES), lanes: clone(DEFAULT_LANES) };
+    render();
+    announce("Recommendation restored.");
+  });
+
+  initTheme();
+  render();
+})();
+</script>
+</body>
+</html>
