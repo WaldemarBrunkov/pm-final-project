@@ -1,14 +1,25 @@
-# PRD & Prototype Sprint
+# PRD & Prototype Sprint (Module 4)
 
-> **Module 4 · Lab 2.** Repo file `04-roadmap/prd-and-prototype.md` — part of your submission.
-> Do the lab in the **Module 4 · Exercise 2 Guide** (linked from the Module 4 deck), then click **⬇ Download .md** — it saves as this exact file. Commit it here.
-> It deepens the top feature from your `roadmap-prd-prototype.md` and feeds the **Roadmap, PRD & Prototype** slide of your Module 6 deck.
+## Pick & scope with MoSCoW
+- **The “Now” feature I’m scoping (name + one-line core description):** Payday alignment
+- **My finalized Must-Haves (after overriding the AI):** 1. Capture income date
 
-## Responses
+The consumer must be able to provide their regular payday or benefit payment date. Without this information, the repayment schedule cannot reflect their financial reality.
 
-- **The "Now" feature I'm scoping (name + one-line core description):** _(not filled in)_
-- **My finalized Must-Haves (after overriding the AI):** _(not filled in)_
-- **What I demoted from Must → Should/Won't, and why:** _(not filled in)_
-- **One thing my PRD makes explicit that a vague brief would have missed:** _(not filled in)_
-- **Where the prototype revealed a gap in my PRD logic (what I updated):** _(not filled in)_
-- **My shareable prototype URL:** _(not filled in)_
+2. Recommend aligned payment date
+
+The system must recommend a repayment date aligned with the consumer's income. Simply collecting the income date without acting on it does not solve the core problem.
+
+5. Explain repayment timing
+
+The journey must explain why a payment date is recommended and how it supports a sustainable repayment plan. This directly addresses the consumer's lack of confidence at the moment of commitment.
+- **What I demoted from Must → Should/Won’t, and why:** 6. Measure behavioural impact
+
+Track payment date selection, completion rate, agent contacts, and missed-payment rate to evaluate the feature after launch. This is important for optimisation but not required for the initial user experience.
+
+## Generate your Simplified PRD
+- **One thing my PRD makes explicit that a vague brief would have missed:** A vague brief might ask for flexible payment dates. This PRD makes it explicit that the goal is to increase consumer confidence by aligning repayments with income timing and measuring success through sustainable self-service outcomes, not just feature delivery.
+
+## Prompt-to-prototype sprint
+- **Where did the prototype reveal a gap in my PRD logic? (what I had to update):** The prototype revealed that the journey contained too many sequential steps. Although each screen had a clear purpose, the overall flow created unnecessary friction for a time-constrained user like Mara. I updated the PRD to simplify the journey by combining related interactions and reducing the number of decisions required before commitment.
+- **My prototype, as a link or a screenshot (publish or share from your tool; in Lovable that is Share → Share Preview, in Bolt Publish → Web. No share URL? Screenshot the working flow):** https://github.com/WaldemarBrunkov/pm-final-project/blob/main/04-roadmap/payday-alignment-prototype.html
