@@ -1,0 +1,307 @@
+Data Snapshots: Instalment Journey (Pilot DE, synthetic)
+Important: The funnel figures are extrapolated exactly from the case study baseline. Everything below that (drop-off per step, call reasons, rates by plan size) consists of distributions I made up, but kept internally consistent. They are only suitable for practice and for testing assumptions, not as evidence. The totals match the baseline.
+Snapshot 1: Funnel (per month)
+Stage
+	
+Count
+	
+Rate
+
+
+Outreach
+	
+100,000
+	
+–
+
+
+Portal visits
+	
+38,000
+	
+38%
+
+
+Instalment journey started
+	
+8,360
+	
+22% of visitors
+
+
+Agreement completed
+	
+3,846
+	
+46% of starters
+
+
+Drop-offs
+	
+4,514
+	
+54% of starters
+
+
+Agent contact within 7 days
+	
+2,592
+	
+31% of starters
+
+
+Payment missed within 60 days
+	
+~731
+	
+19% of agreements
+Snapshot 2: Where the 4,514 drop-offs leave (synthetic)
+Step
+	
+Drop-offs
+	
+Share
+
+
+Case overview / claim selection
+	
+590
+	
+13.1%
+
+
+Affordability (slider)
+	
+1,210
+	
+26.8%
+
+
+Income proof upload
+	
+1,480
+	
+32.8%
+
+
+Start date selection
+	
+430
+	
+9.5%
+
+
+Review / consent
+	
+560
+	
+12.4%
+
+
+Confirmation (technical)
+	
+244
+	
+5.4%
+The upload is the biggest hurdle. This fits P5/P6 (Why income? No payslip when paid in cash).
+Snapshot 3: Call reasons of the 2,592 contacts (synthetic)
+Reason
+	
+Count
+	
+Share
+	
+Quote reference
+
+
+Reassurance / "Is this okay?"
+	
+622
+	
+24%
+	
+P10
+
+
+Document not obtainable (cash wages etc.)
+	
+544
+	
+21%
+	
+P6
+
+
+Multiple claims: relationship unclear
+	
+363
+	
+14%
+	
+P2
+
+
+Start date / payday doesn't fit
+	
+285
+	
+11%
+	
+P9
+
+
+Why is income requested?
+	
+259
+	
+10%
+	
+P5
+
+
+Outdated data (address/balance)
+	
+233
+	
+9%
+	
+A4
+
+
+Other / technical
+	
+286
+	
+11%
+	
+–
+Almost half of the calls (reassurance + document) are not an information problem in the strict sense. More text in the portal won't solve that.
+Snapshot 4: Plan size vs. payment default (60 days, synthetic)
+Chosen instalment
+	
+Agreements
+	
+Default rate
+	
+Defaults
+
+
+Default (€150) accepted
+	
+1,577 (41%)
+	
+25%
+	
+~394
+
+
+Below default
+	
+1,038 (27%)
+	
+12%
+	
+~125
+
+
+Above default
+	
+1,231 (32%)
+	
+17%
+	
+~209
+
+
+Total
+	
+3,846
+	
+~19%
+	
+~728
+The point behind this: people who simply accept the default fail most often (P4, anchoring). This is my assumption, not a measurement.
+Snapshot 5: Documents
+Metric
+	
+Value
+
+
+Starters reaching the income step
+	
+6,560
+
+
+Drop out there
+	
+1,480
+
+
+Upload a document
+	
+5,080
+
+
+Of those needing clarification/review (28%)
+	
+~1,422
+Snapshot 6: Agent view of the 2,592 escalations (synthetic)
+Metric
+	
+Value
+
+
+Cases with empty/near-empty digital context
+	
+68% (~1,763)
+
+
+Agent sees customer's inputs
+	
+0%
+
+
+Agent sees offer shown (recommendation vs. default)
+	
+0%
+
+
+Avg. time spent on repeat checks
+	
+6.5 min per case
+
+
+Total effort per month
+	
+~280 hrs
+
+
+Corrections via workaround instead of logged override
+	
+80%
+Snapshot 7: SSR vs. real outcome (synthetic)
+Pay-in-full is not included in the baseline, so I only look at plans.
+Metric
+	
+Value
+
+
+Total plans
+	
+3,846
+
+
+Of which counted in SSR (no contact ±30 days)
+	
+~2,650
+
+
+Of which defaulting within 60 days (19%)
+	
+~504
+
+
+"Durable SSR" (plan holds)
+	
+~2,146
+SSR is therefore about 24% more optimistic than the durable rate. This is exactly the gap that A6/A8 describe.
