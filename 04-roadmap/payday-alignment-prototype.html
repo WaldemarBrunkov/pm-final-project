@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Payday Alignment – Prototype</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --ink: #1c2430;
+    --muted: #5d6877;
+    --line: #dde3ea;
+    --brand: #1f6f5c;
+    --brand-soft: #e6f2ee;
+    --warn-soft: #fff6e0;
+    --warn-line: #f0d18a;
+    --error-soft: #fdecec;
+    --error-line: #efb4b4;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .shell { max-width: 480px; margin: 0 auto; padding: 24px 16px 120px; }
+  .brandbar { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--brand); margin-bottom: 16px; }
+  .brandbar .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--brand); }
+  .steps { display: flex; gap: 6px; margin-bottom: 16px; }
+  .steps span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+  .steps span.on { background: var(--brand); }
+  .card { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  h1 { font-size: 1.45rem; margin: 0 0 8px; line-height: 1.25; }
+  .helper { color: var(--muted); margin: 0 0 20px; }
+  label.field { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 6px; }
+  select, input[type=date] {
+    width: 100%; padding: 12px; font-size: 1rem; border: 1px solid var(--line);
+    border-radius: 10px; background: #fff; color: var(--ink);
+  }
+  .divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .85rem; margin: 18px 0 12px; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    border: 1px solid var(--line); background: #fff; padding: 9px 14px; border-radius: 999px;
+    font-size: .95rem; cursor: pointer; color: var(--ink);
+  }
+  .chip[aria-pressed=true] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); font-weight: 600; }
+  .note { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+  .subfield { margin-top: 16px; }
+  .btn {
+    display: block; width: 100%; padding: 14px; font-size: 1rem; font-weight: 600;
+    border-radius: 10px; border: none; cursor: pointer; margin-top: 24px;
+    background: var(--brand); color: #fff;
+  }
+  .btn:disabled { background: #b8c4cf; cursor: not-allowed; }
+  .btn.secondary { background: #fff; color: var(--brand); border: 1px solid var(--brand); margin-top: 10px; }
+  .linkbtn { background: none; border: none; color: var(--brand); font-size: .95rem; cursor: pointer; padding: 0; text-decoration: underline; }
+  .back { margin-bottom: 12px; }
+  .secondary-text { text-align: center; color: var(--muted); font-size: .9rem; margin-top: 12px; }
+  .datecard { border: 2px solid var(--brand); background: var(--brand-soft); border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 16px; }
+  .datecard .lbl { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--brand); font-weight: 600; }
+  .datecard .big { font-size: 1.5rem; font-weight: 700; margin: 4px 0; }
+  .datecard .tag { display: inline-block; font-size: .8rem; background: #fff; color: var(--brand); border-radius: 999px; padding: 3px 10px; margin-top: 4px; }
+  .explain { background: #f8fafb; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+  .explain h2, .summary h2 { font-size: .95rem; margin: 0 0 8px; }
+  .explain ul { margin: 0; padding-left: 18px; }
+  .explain li { margin-bottom: 4px; }
+  .callout { border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: .95rem; }
+  .callout.warn { background: var(--warn-soft); border: 1px solid var(--warn-line); }
+  .callout.error { background: var(--error-soft); border: 1px solid var(--error-line); }
+  .summary { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: .95rem; }
+  .row:last-child { border-bottom: none; }
+  .row .k { color: var(--muted); }
+  .row .v { font-weight: 600; text-align: right; }
+  .adjust { border-top: 1px solid var(--line); padding-top: 14px; font-size: .9rem; color: var(--muted); }
+  .adjust p { margin: 8px 0 0; }
+  .success-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-size: 28px; margin: 0 auto 12px; }
+  .center { text-align: center; }
+  .fineprint { font-size: .8rem; color: var(--muted); margin-top: 16px; }
+
+  .proto { position: fixed; right: 12px; bottom: 12px; width: 320px; max-height: 70vh; overflow: auto; background: #1c2430; color: #e9eef3; border-radius: 12px; font-size: .82rem; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+  .proto summary { padding: 10px 14px; cursor: pointer; font-weight: 600; }
+  .proto .body { padding: 0 14px 14px; }
+  .proto input { width: 100%; padding: 6px; border-radius: 6px; border: none; margin: 4px 0 10px; }
+  .proto button { background: #3a4757; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; margin-right: 6px; }
+  .proto .t { padding: 4px 0; border-bottom: 1px solid #2e3a48; }
+  .proto .pass { color: #7fd8a8; } .proto .fail { color: #ff9b9b; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo } = React;
+
+// ---------- Static dummy plan data ----------
+const PLAN = {
+  currency: "€",
+  total: 1020,
+  monthly: { amount: 85.0, count: 12, frequency: "Monthly" },
+  fourWeekly: { amount: 78.46, count: 13, frequency: "Every 4 weeks" },
+};
+
+// ---------- Deterministic date rules ----------
+const BUFFER_DAYS = 2;    // pay this many days after income arrives
+const MIN_LEAD_DAYS = 5;  // never ask for a first payment sooner than this
+const MAX_AHEAD_DAYS = 60;
+
+const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const lastDayOfMonth = (y, m) => new Date(y, m + 1, 0).getDate();
+const toISO = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const fromISO = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const fmt = (d) => d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+const fmtShort = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long" });
+const money = (n) => `${PLAN.currency}${n.toFixed(2)}`;
+const ordinal = (n) => { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+
+function incomeInMonth(income, y, m) {
+  const last = lastDayOfMonth(y, m);
+  if (income.type === "day") return new Date(y, m, Math.min(income.day, last));
+  if (income.type === "mid") return new Date(y, m, 15);
+  if (income.type === "end") return new Date(y, m, last);
+  return null;
+}
+
+// Yields upcoming income dates (>= today) in order.
+function upcomingIncomeDates(income, today, count = 3) {
+  const out = [];
+  if (income.type === "4w") {
+    let d = fromISO(income.last);
+    while (d < today) d = addDays(d, 28);
+    for (let i = 0; i < count; i++) out.push(addDays(d, 28 * i));
+    return out;
+  }
+  for (let k = 0; out.length < count && k < 24; k++) {
+    const d = incomeInMonth(income, today.getFullYear(), today.getMonth() + k);
+    if (d >= today) out.push(d);
+  }
+  return out;
+}
+
+function recommend(income, todayRaw) {
+  const today = startOfDay(todayRaw);
+  const fail = (reason) => ({ ok: false, reason });
+
+  if (!income || !income.type) return fail("No income timing selected.");
+  if (income.type === "day" && !(income.day >= 1 && income.day <= 31)) return fail("Invalid day.");
+  if (income.type === "4w") {
+    if (!income.last) return fail("No recent income date given for the 4-week cycle.");
+    const last = fromISO(income.last);
+    if (last > today) return fail("The last income date is in the future.");
+    if (last < addDays(today, -365)) return fail("The last income date is more than a year ago.");
+  }
+
+  const earliest = addDays(today, MIN_LEAD_DAYS);
+  const incomes = upcomingIncomeDates(income, today);
+  for (let i = 0; i < incomes.length; i++) {
+    const pay = addDays(incomes[i], BUFFER_DAYS);
+    if (pay >= earliest && pay <= addDays(today, MAX_AHEAD_DAYS)) {
+      return {
+        ok: true,
+        incomeDate: incomes[i],
+        payDate: pay,
+        adjusted: i > 0,
+        skippedIncome: i > 0 ? incomes[0] : null,
+      };
+    }
+  }
+  return fail("No date within the allowed window.");
+}
+
+function describeIncome(income) {
+  if (!income) return "";
+  if (income.type === "day") return `Around the ${ordinal(income.day)} of each month`;
+  if (income.type === "mid") return "Middle of the month (around the 15th)";
+  if (income.type === "end") return "End of the month";
+  if (income.type === "4w") return income.last ? `Every 4 weeks (last on ${fmtShort(fromISO(income.last))})` : "Every 4 weeks";
+  return "";
+}
+
+const planFor = (income) => (income && income.type === "4w" ? PLAN.fourWeekly : PLAN.monthly);
+
+// ---------- Rule checks (Eval 1) ----------
+const TEST_TODAY = "2026-10-08";
+const TESTS = [
+  { name: "Payday later this month (25th)", income: { type: "day", day: 25 }, today: TEST_TODAY, expect: "2026-10-27" },
+  { name: "Payday already passed (3rd)", income: { type: "day", day: 3 }, today: TEST_TODAY, expect: "2026-11-05" },
+  { name: "Middle of month", income: { type: "mid" }, today: TEST_TODAY, expect: "2026-10-17" },
+  { name: "End of month", income: { type: "end" }, today: TEST_TODAY, expect: "2026-11-02" },
+  { name: "Too close to today (10th) → next cycle", income: { type: "day", day: 10 }, today: TEST_TODAY, expect: "2026-11-12" },
+  { name: "Payday is today → next cycle", income: { type: "day", day: 8 }, today: TEST_TODAY, expect: "2026-11-10" },
+  { name: "End of month, too close (29 Oct)", income: { type: "end" }, today: "2026-10-29", expect: "2026-12-02" },
+  { name: "31st in February → last day", income: { type: "day", day: 31 }, today: "2027-02-10", expect: "2027-03-02" },
+  { name: "Every 4 weeks (last 30 Sep)", income: { type: "4w", last: "2026-09-30" }, today: TEST_TODAY, expect: "2026-10-30" },
+  { name: "Every 4 weeks (last 7 Oct)", income: { type: "4w", last: "2026-10-07" }, today: TEST_TODAY, expect: "2026-11-06" },
+  { name: "Every 4 weeks, no date → fallback", income: { type: "4w", last: "" }, today: TEST_TODAY, expect: null },
+  { name: "Every 4 weeks, future date → fallback", income: { type: "4w", last: "2026-10-20" }, today: TEST_TODAY, expect: null },
+];
+
+function runTests() {
+  return TESTS.map((t) => {
+    const r = recommend(t.income, fromISO(t.today));
+    const got = r.ok ? toISO(r.payDate) : null;
+    return { ...t, got, pass: got === t.expect };
+  });
+}
+
+// ---------- UI ----------
+function Steps({ step }) {
+  return (
+    <div className="steps" aria-label={`Step ${step} of 4`}>
+      {[1, 2, 3, 4].map((i) => <span key={i} className={i <= step ? "on" : ""} />)}
+    </div>
+  );
+}
+
+function SummaryRows({ rows }) {
+  return rows.map(([k, v]) => (
+    <div className="row" key={k}><span className="k">{k}</span><span className="v">{v}</span></div>
+  ));
+}
+
+function EntryScreen({ income, setIncome, today, onContinue }) {
+  const chips = [
+    { type: "end", label: "End of month" },
+    { type: "mid", label: "Middle of month" },
+    { type: "4w", label: "Every 4 weeks" },
+  ];
+  const canContinue = !!(income && income.type);
+
+  return (
+    <div className="card">
+      <h1>When do you usually receive your income?</h1>
+      <p className="helper">We'll use this to suggest a payment date that is easier to keep.</p>
+
+      <label className="field" htmlFor="day">Day of the month</label>
+      <select
+        id="day"
+        value={income && income.type === "day" ? income.day : ""}
+        onChange={(e) => setIncome(e.target.value ? { type: "day", day: Number(e.target.value) } : null)}
+      >
+        <option value="">Choose a day</option>
+        {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+          <option key={d} value={d}>{ordinal(d)}</option>
+        ))}
+      </select>
+      {income && income.type === "day" && income.day > 28 && (
+        <p className="note">In shorter months, we'll use the last day of the month.</p>
+      )}
+
+      <div className="divider">or, if you're not sure of the exact day</div>
+      <div className="chips">
+        {chips.map((c) => (
+          <button
+            key={c.type}
+            className="chip"
+            aria-pressed={!!income && income.type === c.type}
+            onClick={() => setIncome(c.type === "4w" ? { type: "4w", last: (income && income.last) || "" } : { type: c.type })}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+
+      {income && income.type === "4w" && (
+        <div className="subfield">
+          <label className="field" htmlFor="last">When did it last arrive?</label>
+          <input
+            id="last"
+            type="date"
+            max={toISO(today)}
+            value={income.last}
+            onChange={(e) => setIncome({ type: "4w", last: e.target.value })}
+          />
+          <p className="note">We'll estimate your next payment from this. A rough date is fine.</p>
+        </div>
+      )}
+
+      <p className="note" style={{ marginTop: 16 }}>
+        If your income varies, pick the timing that usually feels safest. We only use it to suggest when your first payment could be. You don't need to provide any documents.
+      </p>
+
+      <button className="btn" disabled={!canContinue} onClick={onContinue}>Continue</button>
+      <p className="secondary-text">This does not change your debt amount.</p>
+    </div>
+  );
+}
+
+function RecommendationScreen({ income, rec, onBack, onContinue }) {
+  const [showAdjust, setShowAdjust] = useState(false);
+  const plan = planFor(income);
+
+  if (!rec.ok) {
+    return (
+      <div className="card">
+        <button className="linkbtn back" onClick={onBack}>← Back</button>
+        <h1>Recommended first payment date</h1>
+        <div className="callout error" role="alert">
+          <strong>We can't recommend a date yet. Please choose another income timing.</strong>
+          {income && income.type === "4w" && (
+            <p style={{ margin: "6px 0 0" }}>For "Every 4 weeks", add the date your income last arrived (today or earlier).</p>
+          )}
+        </div>
+        <button className="btn" onClick={onBack}>Choose another income timing</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card">
+      <button className="linkbtn back" onClick={onBack}>← Back</button>
+      <h1>Recommended first payment date</h1>
+      <p className="helper">Based on what you told us: {describeIncome(income).toLowerCase()}.</p>
+
+      <div className="datecard">
+        <div className="lbl">Suggested first payment</div>
+        <div className="big">{fmt(rec.payDate)}</div>
+        <div className="tag">Suggested for you · you decide</div>
+      </div>
+
+      {rec.adjusted && (
+        <div className="callout warn">
+          Your next income is expected on <strong>{fmtShort(rec.skippedIncome)}</strong>, which is very soon. Instead of asking you to pay straight away, we've suggested the payment after your following income, so you have time to get ready.
+        </div>
+      )}
+
+      <div className="explain">
+        <h2>Why this date?</h2>
+        <ul>
+          <li>This date is after your selected income date ({fmtShort(rec.incomeDate)}).</li>
+          <li>It gives you a couple of days after your money arrives, so the payment isn't due before you've been paid.</li>
+          <li>It may reduce the risk of missing your first payment. Getting the first payment right is a good start to keeping your plan on track.</li>
+        </ul>
+        <p className="note" style={{ marginBottom: 0 }}>
+          This date isn't fixed forever. We use it to line up your first payment with your income.
+        </p>
+      </div>
+
+      <div className="summary">
+        <h2>Your plan</h2>
+        <SummaryRows rows={[
+          ["Amount per payment", money(plan.amount)],
+          ["First payment date", fmtShort(rec.payDate)],
+          ["Payment frequency", plan.frequency],
+          ["Number of payments", plan.count],
+        ]} />
+      </div>
+
+      <div className="adjust">
+        <button className="linkbtn" onClick={() => setShowAdjust((s) => !s)} aria-expanded={showAdjust}>
+          Need a different date?
+        </button>
+        {showAdjust && (
+          <p>
+            Choosing any calendar date isn't available yet. If this suggestion doesn't fit, you can{" "}
+            <button className="linkbtn" onClick={onBack}>change your income timing</button>{" "}
+            and we'll suggest a new date. You don't have to accept a date that doesn't work for you.
+          </p>
+        )}
+      </div>
+
+      <button className="btn" onClick={onContinue}>Continue to review</button>
+    </div>
+  );
+}
+
+function ReviewScreen({ income, rec, onBack, onConfirm }) {
+  const plan = planFor(income);
+  return (
+    <div className="card">
+      <button className="linkbtn back" onClick={onBack}>← Back</button>
+      <h1>Check your plan</h1>
+      <p className="helper">Nothing is set up until you confirm below.</p>
+
+      <div className="summary">
+        <SummaryRows rows={[
+          ["Your income timing", describeIncome(income)],
+          ["Expected income date", fmtShort(rec.incomeDate)],
+          ["First payment date", fmt(rec.payDate)],
+          ["Amount per payment", money(plan.amount)],
+          ["Payment frequency", plan.frequency],
+          ["Total to repay", money(PLAN.total)],
+        ]} />
+      </div>
+
+      <div className="explain">
+        <h2>Why this first payment date</h2>
+        <p style={{ margin: 0 }}>
+          It's {BUFFER_DAYS} days after you expect your income on {fmtShort(rec.incomeDate)}, so the payment is due after your money usually arrives.
+        </p>
+      </div>
+
+      <button className="btn" onClick={onConfirm}>Confirm my plan</button>
+      <button className="btn secondary" onClick={onBack}>Go back</button>
+    </div>
+  );
+}
+
+function ConfirmationScreen({ income, rec, onDone }) {
+  const plan = planFor(income);
+
+  const download = () => {
+    const text = [
+      "Repayment plan summary (prototype)",
+      "",
+      `Amount per payment: ${money(plan.amount)}`,
+      `Payment frequency: ${plan.frequency}`,
+      `Number of payments: ${plan.count}`,
+      `First payment date: ${fmt(rec.payDate)}`,
+      `Income timing used: ${describeIncome(income)}`,
+      `Expected income date: ${fmt(rec.incomeDate)}`,
+      "",
+      "Your first payment is aligned with when you said money usually arrives.",
+      "We'll remind you before the first payment.",
+    ].join("\n");
+    const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "repayment-plan-summary.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="card">
+      <div className="center">
+        <div className="success-icon">✓</div>
+        <h1>Your repayment plan is set</h1>
+      </div>
+
+      <div className="summary" style={{ marginTop: 16 }}>
+        <SummaryRows rows={[
+          ["Monthly instalment", plan.frequency === "Monthly" ? money(plan.amount) : `${money(plan.amount)} every 4 weeks`],
+          ["First payment date", fmt(rec.payDate)],
+          ["Income timing used", describeIncome(income)],
+        ]} />
+      </div>
+
+      <div className="callout" style={{ background: "var(--brand-soft)" }}>
+        Your first payment is aligned with when you said money usually arrives.
+      </div>
+      <p>We'll remind you before the first payment.</p>
+
+      <button className="btn" onClick={onDone}>Done</button>
+      <button className="btn secondary" onClick={download}>Download summary</button>
+    </div>
+  );
+}
+
+function PrototypePanel({ today, setToday, onReset }) {
+  const [results, setResults] = useState(null);
+  const passed = results ? results.filter((r) => r.pass).length : 0;
+  return (
+    <details className="proto">
+      <summary>Prototype controls</summary>
+      <div className="body">
+        <div>Simulate "today"</div>
+        <input type="date" value={toISO(today)} onChange={(e) => e.target.value && setToday(fromISO(e.target.value))} />
+        <button onClick={onReset}>Restart flow</button>
+        <button onClick={() => setResults(runTests())}>Run rule checks</button>
+        {results && (
+          <div style={{ marginTop: 10 }}>
+            <strong>{passed}/{results.length} passed ({Math.round((passed / results.length) * 100)}%)</strong>
+            {results.map((r) => (
+              <div className="t" key={r.name}>
+                <span className={r.pass ? "pass" : "fail"}>{r.pass ? "✓" : "✗"}</span> {r.name}
+                <div style={{ opacity: .7 }}>expected {r.expect || "fallback"} · got {r.got || "fallback"}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </details>
+  );
+}
+
+function App() {
+  const [step, setStep] = useState(1);
+  const [income, setIncome] = useState(null);
+  const [today, setToday] = useState(() => startOfDay(new Date()));
+  const rec = useMemo(() => recommend(income, today), [income, today]);
+
+  const reset = () => { setStep(1); setIncome(null); };
+
+  return (
+    <div className="shell">
+      <div className="brandbar"><span className="dot" />Repayment portal</div>
+      {step <= 4 && <Steps step={step} />}
+
+      {step === 1 && <EntryScreen income={income} setIncome={setIncome} today={today} onContinue={() => setStep(2)} />}
+      {step === 2 && <RecommendationScreen income={income} rec={rec} onBack={() => setStep(1)} onContinue={() => setStep(3)} />}
+      {step === 3 && rec.ok && <ReviewScreen income={income} rec={rec} onBack={() => setStep(2)} onConfirm={() => setStep(4)} />}
+      {step === 4 && rec.ok && <ConfirmationScreen income={income} rec={rec} onDone={() => setStep(5)} />}
+      {step === 5 && (
+        <div className="card center">
+          <h1>All done</h1>
+          <p className="helper">You can close this page. This was a prototype, so no real plan was created.</p>
+          <button className="btn secondary" onClick={reset}>Start again</button>
+        </div>
+      )}
+
+      <p className="fineprint">
+        Prototype only. The suggested date aims to line up your payment with the income timing you told us. It is not an affordability check or an approval, and it isn't legal or financial advice.
+      </p>
+
+      <PrototypePanel today={today} setToday={setToday} onReset={reset} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
