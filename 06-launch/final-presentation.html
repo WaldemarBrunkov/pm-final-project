@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payday Alignment · Final Project · Waldemar Brunkov</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07162C; --fg:#ffffff; --muted:#ffffff;
+    --orange:#fb923c; --cyan:#22d3ee; --teal:#34d399; --blue:#60a5fa; --violet:#a78bfa; --pink:#f472b6;
+    --eyebrow:#fdba74;
+    --border:rgba(251,146,60,0.25);
+    --card:rgba(255,255,255,0.035);
+    --head:'Saans','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --body:'Saans','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --mono:'Antarctican Mono','JetBrains Mono',ui-monospace,'SFMono-Regular',Consolas,monospace;
+    --r:15px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-snap-type:y mandatory;scroll-behavior:smooth;background:var(--bg)}
+  body{
+    font-family:var(--body);font-weight:400;color:var(--fg);background:var(--bg);
+    font-size:clamp(12px,1.62vh,15.5px);line-height:1.5;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  a{color:inherit}
+  strong{font-weight:700}
+
+  /* ---------- chrome ---------- */
+  .progress{position:fixed;inset:0 0 auto 0;height:3px;z-index:50;background:rgba(255,255,255,0.06)}
+  .progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--pink) 55%,var(--cyan));box-shadow:0 0 12px rgba(251,146,60,.6);transition:width .12s linear}
+  .dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:12px;list-style:none}
+  .dots a{position:relative;display:block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(251,146,60,.6);background:transparent;transition:all .25s ease}
+  .dots a:hover,.dots a:focus-visible{background:rgba(251,146,60,.45);outline:none}
+  .dots a.active{background:var(--orange);transform:scale(1.25);box-shadow:0 0 0 4px rgba(251,146,60,.18)}
+  .dots a::after{content:attr(data-label);position:absolute;right:20px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;background:rgba(7,22,44,.9);padding:3px 8px;border-radius:6px;border:1px solid var(--border)}
+  .dots a:hover::after,.dots a:focus-visible::after{opacity:1}
+  .keys{position:fixed;left:22px;bottom:16px;z-index:40;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);opacity:.55}
+  .keys kbd{font-family:inherit;border:1px solid var(--border);border-radius:4px;padding:1px 5px;margin:0 2px}
+
+  /* ---------- slides ---------- */
+  section{
+    min-height:100vh;scroll-snap-align:start;scroll-snap-stop:always;position:relative;overflow:hidden;
+    padding:6.2vh 6.2vw 6.5vh 5.6vw;display:flex;flex-direction:column;gap:2.2vh;
+  }
+  section::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(900px 520px at 88% -8%,rgba(251,146,60,.13),transparent 60%),
+      radial-gradient(700px 480px at -6% 108%,rgba(34,211,238,.08),transparent 60%);
+  }
+  .foot{position:absolute;left:5.6vw;right:6.2vw;bottom:2.4vh;display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);opacity:.6}
+  .eyebrow{font-family:var(--mono);font-weight:500;font-size:.78em;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow)}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+  .head h2{font-family:var(--head);font-weight:800;font-size:clamp(26px,4.4vh,46px);line-height:1.05;letter-spacing:-.02em;margin-top:.5vh}
+  .head h2 em{font-style:normal;color:var(--orange)}
+  .head p{max-width:46ch;text-align:right;font-size:.92em;color:var(--muted)}
+  h3{font-family:var(--head);font-weight:700;font-size:1.08em;line-height:1.25}
+  .label{font-family:var(--mono);font-weight:500;font-size:.72em;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow);display:flex;align-items:center;gap:8px;margin-bottom:.7vh}
+  .label i{display:inline-block;width:7px;height:7px;border-radius:2px;background:var(--orange)}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.9vh 1.3vw;position:relative}
+  .card.hero{background:linear-gradient(140deg,rgba(251,146,60,.17),rgba(244,114,182,.06) 45%,rgba(34,211,238,.05));box-shadow:0 22px 44px -22px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06)}
+  .card.key{box-shadow:0 18px 38px -20px rgba(0,0,0,.75)}
+  .card p+p{margin-top:.8vh}
+  .small{font-size:.86em}
+  .xs{font-size:.78em}
+  .grid{display:grid;gap:1.6vh 1.2vw}
+  .fill{flex:1}
+  .mono{font-family:var(--mono)}
+
+  .metric{font-family:var(--mono);font-weight:500;font-size:clamp(20px,3.4vh,34px);line-height:1;letter-spacing:-.02em}
+  .metric small{font-size:.5em;letter-spacing:0;margin-left:4px}
+  .tile{display:flex;flex-direction:column;gap:.8vh}
+  .tile .cap{font-size:.82em;line-height:1.35}
+
+  .pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.74em;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid var(--border);background:rgba(251,146,60,.08);white-space:nowrap}
+  .pill.c{border-color:rgba(34,211,238,.4);background:rgba(34,211,238,.08)}
+  .pill.t{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
+  .pill.v{border-color:rgba(167,139,250,.45);background:rgba(167,139,250,.08)}
+  .pill.p{border-color:rgba(244,114,182,.45);background:rgba(244,114,182,.08)}
+  .pill.b{border-color:rgba(96,165,250,.45);background:rgba(96,165,250,.08)}
+  .pills{display:flex;flex-wrap:wrap;gap:8px}
+
+  .btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--head);font-weight:700;font-size:.95em;text-decoration:none;color:#07162C;background:var(--orange);padding:11px 20px;border-radius:12px;box-shadow:0 12px 26px -10px rgba(251,146,60,.7);transition:transform .15s ease,box-shadow .15s ease}
+  .btn:hover,.btn:focus-visible{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(251,146,60,.85);outline:none}
+  .btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--border);box-shadow:none}
+  .btn.ghost:hover{background:rgba(251,146,60,.1)}
+  .btn svg{width:16px;height:16px}
+
+  .callout{border-left:3px solid var(--orange);background:linear-gradient(90deg,rgba(251,146,60,.13),rgba(251,146,60,.02));border-radius:0 var(--r) var(--r) 0;padding:1.8vh 1.3vw}
+  .callout.pink{border-color:var(--pink);background:linear-gradient(90deg,rgba(244,114,182,.13),rgba(244,114,182,.02))}
+  .callout.cyan{border-color:var(--cyan);background:linear-gradient(90deg,rgba(34,211,238,.12),rgba(34,211,238,.02))}
+  .placeholder{border:1px dashed rgba(251,146,60,.4);border-radius:12px;padding:1.2vh .9vw;font-family:var(--mono);font-size:.76em;letter-spacing:.06em;color:var(--muted);opacity:.75;background:repeating-linear-gradient(135deg,rgba(255,255,255,.02) 0 8px,transparent 8px 16px)}
+
+  ol.steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:.75vh}
+  ol.steps li{counter-increment:s;display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start}
+  ol.steps li::before{content:counter(s);font-family:var(--mono);font-size:.78em;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;border:1px solid var(--border);color:var(--eyebrow);margin-top:1px}
+  ol.steps li.hot::before{background:var(--orange);color:#07162C;border-color:var(--orange)}
+  ul.ticks{list-style:none;display:flex;flex-direction:column;gap:.8vh}
+  ul.ticks li{padding-left:20px;position:relative}
+  ul.ticks li::before{content:"";position:absolute;left:0;top:.5em;width:9px;height:9px;border-radius:3px;background:var(--teal)}
+
+  blockquote{font-family:var(--head);font-weight:600;font-size:1.05em;line-height:1.4}
+  blockquote cite{display:block;margin-top:.8vh;font-family:var(--mono);font-style:normal;font-weight:400;font-size:.72em;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow)}
+
+  /* ---------- cover ---------- */
+  .cover{justify-content:center;gap:3vh}
+  .cover::after{content:"";position:absolute;right:-12vw;top:50%;transform:translateY(-50%);width:62vh;height:62vh;border-radius:50%;z-index:-1;
+    background:radial-gradient(circle at 35% 35%,rgba(251,146,60,.45),rgba(244,114,182,.18) 45%,transparent 70%);filter:blur(10px);opacity:.75}
+  .cover h1{font-family:var(--head);font-weight:900;font-size:clamp(54px,12vh,132px);line-height:.92;letter-spacing:-.045em}
+  .cover h1 span{background:linear-gradient(90deg,var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .cover .pitch{max-width:62ch}
+  .meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2vw;max-width:1100px}
+  .meta .card{padding:1.6vh 1.1vw}
+  .meta .v{font-family:var(--mono);font-size:.86em;word-break:break-all;margin-top:.4vh}
+  .meta a{text-decoration:none;border-bottom:1px solid rgba(251,146,60,.5)}
+
+  /* ---------- strategy ---------- */
+  .s5{grid-template-columns:1.02fr 1fr;flex:1}
+  .hook{font-family:var(--head);font-weight:700;font-size:clamp(17px,2.55vh,26px);line-height:1.3;letter-spacing:-.01em}
+  .hypo{font-size:.93em;line-height:1.55}
+  .hypo strong{color:var(--eyebrow)}
+  .tiles5{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .c-orange{color:var(--orange)} .c-cyan{color:var(--cyan)} .c-teal{color:var(--teal)} .c-blue{color:var(--blue)} .c-violet{color:var(--violet)} .c-pink{color:var(--pink)}
+
+  /* ---------- research ---------- */
+  .s6top{grid-template-columns:1.25fr .9fr}
+  .journey{grid-template-columns:repeat(4,minmax(0,1fr));position:relative}
+  .journey::before{content:"";position:absolute;left:3%;right:3%;top:22px;height:2px;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--orange),var(--teal));opacity:.6;z-index:0}
+  .stage{position:relative;z-index:1;display:flex;flex-direction:column;gap:.7vh}
+  .stage .node{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-family:var(--mono);font-weight:500;background:#0b2140;border:1px solid var(--border);margin-bottom:.4vh}
+  .stage .card{flex:1;padding:1.5vh 1vw}
+  .stage.misery .node{background:var(--orange);color:#07162C;border-color:var(--orange);box-shadow:0 0 0 6px rgba(251,146,60,.18),0 0 28px rgba(251,146,60,.55)}
+  .stage.misery .card{border-color:rgba(251,146,60,.75);background:linear-gradient(160deg,rgba(251,146,60,.2),rgba(251,146,60,.04));box-shadow:0 20px 40px -18px rgba(251,146,60,.45)}
+  .flag{position:absolute;top:8px;left:56px;font-family:var(--mono);font-size:.68em;letter-spacing:.12em;text-transform:uppercase;background:var(--pink);color:#07162C;padding:3px 8px;border-radius:6px;font-weight:500}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:.3vh .6vw;font-size:.82em}
+  .kv dt{font-family:var(--mono);font-size:.86em;letter-spacing:.08em;text-transform:uppercase;color:var(--eyebrow);padding-top:1px}
+
+  /* ---------- blueprint ---------- */
+  .s7{grid-template-columns:1.5fr 1fr;flex:1}
+  .moscow{grid-template-columns:repeat(4,minmax(0,1fr));gap:.8vw}
+  .col{display:flex;flex-direction:column;gap:.8vh;border-radius:13px;padding:1.3vh .8vw;background:rgba(255,255,255,.025);border:1px solid var(--border)}
+  .col > .h{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:.74em;letter-spacing:.12em;text-transform:uppercase;padding-bottom:.6vh;border-bottom:1px solid rgba(255,255,255,.08)}
+  .col.must{border-color:rgba(251,146,60,.6);background:linear-gradient(180deg,rgba(251,146,60,.12),rgba(251,146,60,.02))}
+  .col.should .h{color:var(--cyan)} .col.could .h{color:var(--violet)} .col.wont .h{color:var(--pink)} .col.must .h{color:var(--orange)}
+  .item{background:rgba(7,22,44,.6);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.9vh .6vw;font-size:.8em;line-height:1.4}
+  .item b{display:block;font-family:var(--head);font-size:1.08em;margin-bottom:.3vh}
+  .item .tag{font-family:var(--mono);font-size:.82em;opacity:.8}
+
+  /* ---------- validation ---------- */
+  .s8a{grid-template-columns:1.25fr 1fr}
+  .s8b{grid-template-columns:1fr 1fr}
+  .s8c{grid-template-columns:repeat(3,minmax(0,1fr)) .95fr}
+  .stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:.7vw}
+  .stat{border:1px solid var(--border);border-radius:12px;padding:1.1vh .6vw;background:rgba(255,255,255,.03)}
+  .stat .metric{font-size:clamp(17px,2.6vh,27px)}
+  .stat .cap{font-size:.74em;margin-top:.5vh;line-height:1.3}
+  .slot{display:inline;padding:1px 6px;border-radius:5px;background:rgba(251,146,60,.14);border:1px solid rgba(251,146,60,.3)}
+  .slot.c{background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35)}
+  .slot.t{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.35)}
+  .slot.p{background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.35)}
+  .arm{display:flex;flex-direction:column;gap:.7vh}
+  .arm .badge{font-family:var(--mono);font-size:.74em;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border-radius:6px;align-self:flex-start}
+  .rule{display:flex;flex-direction:column;gap:.6vh}
+  .rule .verdict{font-family:var(--head);font-weight:800;font-size:1.35em;letter-spacing:-.01em}
+  .rule.ship{border-color:rgba(52,211,153,.55)} .rule.ship .verdict{color:var(--teal)}
+  .rule.iter{border-color:rgba(96,165,250,.55)} .rule.iter .verdict{color:var(--blue)}
+  .rule.kill{border-color:rgba(244,114,182,.55)} .rule.kill .verdict{color:var(--pink)}
+
+  /* ---------- launch ---------- */
+  .s9{grid-template-columns:1fr 1.15fr;flex:1}
+  .gtm{display:grid;grid-template-columns:auto 1fr;gap:1.1vh 1vw;align-items:baseline}
+  .gtm dt{font-family:var(--mono);font-size:.72em;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow)}
+  .gtm dd{font-size:.88em}
+  .dash{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .bar{position:relative;height:8px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:1vh;overflow:visible}
+  .bar span{position:absolute;inset:0 auto 0 0;border-radius:99px}
+  .bar .mark{position:absolute;top:-4px;width:2px;height:16px;background:var(--fg)}
+  .bar-legend{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.68em;margin-top:.6vh;opacity:.85}
+  .timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:relative;gap:.8vw}
+  .timeline::before{content:"";position:absolute;left:0;right:0;top:7px;height:2px;background:linear-gradient(90deg,var(--orange),var(--cyan),var(--teal));opacity:.55}
+  .ms{position:relative;padding-top:22px;font-size:.8em;line-height:1.35}
+  .ms::before{content:"";position:absolute;top:1px;left:0;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--orange)}
+  .ms.go::before{background:var(--orange)}
+  .ms b{display:block;font-family:var(--mono);font-weight:500;font-size:1.05em;color:var(--eyebrow);letter-spacing:.04em}
+
+  /* ---------- story ---------- */
+  .s10{grid-template-columns:1fr 1fr;flex:1}
+  .aha{font-family:var(--head);font-weight:800;font-size:clamp(20px,3.1vh,32px);line-height:1.18;letter-spacing:-.015em}
+  .aha em{font-style:normal;color:var(--orange)}
+  ol.take{list-style:none;counter-reset:t;display:flex;flex-direction:column;gap:1.3vh}
+  ol.take li{counter-increment:t;display:grid;grid-template-columns:38px 1fr;gap:12px}
+  ol.take li::before{content:"0" counter(t);font-family:var(--mono);font-weight:500;color:var(--orange);font-size:1.15em;line-height:1.3}
+
+  /* ---------- thanks ---------- */
+  .thanks{justify-content:center;align-items:flex-start;gap:3vh}
+  .thanks h2{font-family:var(--head);font-weight:900;font-size:clamp(52px,11vh,120px);line-height:.95;letter-spacing:-.045em}
+  .thanks h2 span{color:var(--orange)}
+  .repo{font-family:var(--mono);font-size:clamp(14px,2.2vh,22px);text-decoration:none;border-bottom:2px solid var(--orange);padding-bottom:3px;word-break:break-all}
+  .submit{display:inline-flex;align-items:center;gap:14px;padding:14px 24px 14px 16px;border-radius:999px;background:linear-gradient(90deg,rgba(251,146,60,.25),rgba(244,114,182,.18));border:1px solid rgba(251,146,60,.7);box-shadow:0 18px 40px -16px rgba(251,146,60,.6);font-family:var(--head);font-weight:700;font-size:1.05em}
+  .submit .dot{width:30px;height:30px;border-radius:50%;background:var(--orange);display:grid;place-items:center;color:#07162C}
+  .submit .dot svg{width:16px;height:16px}
+
+  /* ---------- motion ---------- */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  section.in .reveal{opacity:1;transform:none}
+  section.in .reveal:nth-child(2){transition-delay:.06s}
+  section.in .reveal:nth-child(3){transition-delay:.12s}
+  section.in .reveal:nth-child(4){transition-delay:.18s}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}}
+
+  @media (max-width:980px){
+    html{scroll-snap-type:y proximity}
+    section{padding:7vh 6vw 9vh}
+    .s5,.s6top,.s7,.s8a,.s8b,.s8c,.s9,.s10,.meta,.journey,.moscow,.dash,.timeline,.tiles5{grid-template-columns:1fr}
+    .journey::before,.timeline::before{display:none}
+    .dots,.keys{display:none}
+    .head{flex-direction:column;align-items:flex-start}.head p{text-align:left}
+  }
+  @media print{
+    html{scroll-snap-type:none}
+    section{page-break-after:always;min-height:100vh}
+    .progress,.dots,.keys{display:none}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><span id="bar"></span></div>
+<nav aria-label="Slides"><ol class="dots" id="dots"></ol></nav>
+<div class="keys" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd><kbd>Space</kbd><kbd>Home</kbd><kbd>End</kbd><kbd>Esc</kbd></div>
+
+<!-- 01 · COVER -->
+<section class="cover" id="cover" data-label="Cover">
+  <div class="reveal">
+    <div class="pills" style="margin-bottom:2.4vh">
+      <span class="pill">Product School · PM Certification</span>
+      <span class="pill c">Final Project</span>
+      <span class="pill v">Riverty · BU Collection</span>
+    </div>
+    <h1>Payday<br><span>Alignment</span></h1>
+  </div>
+  <div class="pitch reveal">
+    <div class="placeholder" style="display:inline-block">One-line pitch · not filled in yet</div>
+    <p class="small" style="margin-top:1.4vh">Riverty Case Study: BU Collection — A Fair Way Forward</p>
+  </div>
+  <div class="meta reveal">
+    <div class="card hero">
+      <div class="label"><i></i>Name / cohort</div>
+      <div style="font-family:var(--head);font-weight:700;font-size:1.1em">Waldemar Brunkov + Cohort 1</div>
+    </div>
+    <div class="card">
+      <div class="label"><i style="background:var(--cyan)"></i>Repository</div>
+      <div class="v"><a href="https://github.com/WaldemarBrunkov/pm-final-project" target="_blank" rel="noopener">github.com/WaldemarBrunkov/pm-final-project</a></div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:1vh">
+      <div class="label"><i style="background:var(--teal)"></i>Prototype</div>
+      <a class="btn" href="https://github.com/WaldemarBrunkov/pm-final-project/blob/main/04-roadmap/payday-alignment-prototype.html" target="_blank" rel="noopener">View prototype
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+    </div>
+  </div>
+  <div class="foot"><span>Payday Alignment</span><span>01 / 08</span></div>
+</section>
+
+<!-- 05 · STRATEGY -->
+<section id="strategy" data-label="Strategy">
+  <div class="head reveal">
+    <div><div class="eyebrow">Slide 5 · Strategy</div><h2>A journey that loses money <em>twice</em>.</h2></div>
+    <p>Chosen path: Riverty Case Study: BU Collection — A Fair Way Forward</p>
+  </div>
+
+  <div class="grid s5 reveal">
+    <div class="grid" style="grid-template-rows:auto auto 1fr">
+      <div class="card hero key">
+        <div class="label"><i></i>Problem hook</div>
+        <p class="hook">Today's journey loses money and agent capacity at two points: before an agreement is reached, and after it. Left unchanged, costs rise with volume, portfolio value erodes, and the headline metric (SSR) can mask the problem.</p>
+      </div>
+      <div class="card">
+        <div class="label"><i style="background:var(--teal)"></i>Value proposition</div>
+        <p>Create a transparent, guided repayment journey that helps consumers choose sustainable instalment plans the first time, reducing unnecessary agent interactions while improving long-term recovery performance beyond SSR.</p>
+      </div>
+      <div class="card">
+        <div class="label"><i style="background:var(--pink)"></i>Strategic crisis · 12 months of doing nothing</div>
+        <p class="small">Bad Consumer Feedback may lead to the loss of clients and weakens our market position. Inside of our company, there will be more failed instalment plans and less payments.</p>
+      </div>
+    </div>
+
+    <div class="callout key" style="display:flex;flex-direction:column;gap:1vh">
+      <div class="label"><i></i>Data-backed hypothesis</div>
+      <p class="hypo"><strong>Based on</strong> qualitative research showing that consumers abandon the journey or contact an agent because they lack confidence in choosing an affordable repayment plan, and quantitative evidence showing that <strong>26.8% of journey drop-offs occur at the affordability step</strong>, <strong>31% of journey starters contact an agent within 7 days</strong>, and <strong>25% of consumers accepting the default instalment miss a payment within 60 days</strong>, <strong>I believe that</strong> helping consumers confidently choose a sustainable repayment plan <strong>for consumers with limited time and uncertain income</strong> <strong>will result in</strong> more consumers completing a sustainable self-service repayment journey without agent support, <strong>as measured by a 15% increase in the percentage of consumers who complete a self-service instalment plan without contacting an agent within 20 days</strong>. <strong>I will protect</strong> the percentage of repayment plans that miss a payment within 60 days, ensuring it does not exceed the current baseline of <strong>19%</strong>, <strong>and will make a go/no-go decision after 8–12 weeks or once at least 1,000 consumers have completed the digital instalment journey.</strong></p>
+    </div>
+  </div>
+
+  <div class="grid tiles5 reveal">
+    <div class="card tile"><div class="metric c-orange">26.8%</div><div class="cap">of journey drop-offs occur at the affordability step</div></div>
+    <div class="card tile"><div class="metric c-cyan">31%</div><div class="cap">of journey starters contact an agent within 7 days</div></div>
+    <div class="card tile"><div class="metric c-pink">25%</div><div class="cap">accepting the default instalment miss a payment within 60 days</div></div>
+    <div class="card tile key"><div class="metric c-teal">€4.4M</div><div class="cap">gross recovery at stake per year</div></div>
+    <div class="card tile key"><div class="metric c-violet">€0.9M</div><div class="cap">profit effect per year at 20% contribution</div></div>
+  </div>
+  <div class="foot"><span>Assumptions all invented for illustration · 100,000 contacted / month baseline</span><span>05 · Strategy</span></div>
+</section>
+
+<!-- 06 · RESEARCH -->
+<section id="research" data-label="Research">
+  <div class="head reveal">
+    <div><div class="eyebrow">Slide 6 · Research</div><h2>The workaround is a <em>phone call</em>.</h2></div>
+    <p>Role: a consumer with limited time and an uncertain income who is trying to deal with a debt.</p>
+  </div>
+
+  <div class="grid s6top reveal">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:.8vh">
+        <div class="label" style="margin:0"><i></i>Current workaround · the manual process</div>
+        <span class="pill p">External tool · Contact via telefon</span>
+      </div>
+      <div class="grid" style="grid-template-columns:1.15fr 1fr;gap:1.2vw;align-items:start">
+        <ol class="steps small">
+          <li>Open the self-service portal to check whether an instalment plan is available.</li>
+          <li class="hot">Try to estimate an affordable monthly payment without enough guidance, often second-guessing or under-reporting income.</li>
+          <li>Stop the journey when uncertain about the consequences or when the journey cannot accommodate their situation (e.g. unsuitable start date or missing documents).</li>
+          <li>Contact a collection agent by phone to ask for reassurance or clarification before committing.</li>
+          <li>Complete the repayment plan with the agent instead of through self-service.</li>
+        </ol>
+        <div class="callout pink">
+          <blockquote>“They ask me what I can afford per month. My pay changes every month. Do I put my best month? My worst month? Whatever I put, I feel like I'm signing up to it forever.”<cite>Interview · P3</cite></blockquote>
+        </div>
+      </div>
+    </div>
+    <div class="card hero">
+      <div class="label"><i style="background:var(--teal)"></i>Competitive advantages over the manual workaround</div>
+      <ul class="ticks small">
+        <li>Complete a sustainable repayment plan without calling an agent for reassurance.</li>
+        <li>Increase long-term repayment success instead of simply maximizing self-service completion.</li>
+        <li>Reduce repeat contacts and manual effort while improving recovery performance beyond SSR.</li>
+      </ul>
+      <div style="margin-top:1.4vh;padding-top:1.2vh;border-top:1px solid rgba(255,255,255,.08)">
+        <div class="label"><i style="background:var(--cyan)"></i>Goal</div>
+        <p class="small">Get a clear answer on whether a manageable payment plan is possible, and start one they can keep.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="display:flex;justify-content:space-between;align-items:center;gap:16px">
+    <div class="label" style="margin:0"><i></i>Future-state journey · Understand → Assess → Commit → Succeed</div>
+    <a class="btn ghost xs" style="padding:7px 13px" href="https://github.com/WaldemarBrunkov/pm-final-project/blob/main/04-roadmap/bu-collection-roadmap.html" target="_blank" rel="noopener">Open journey map ↗</a>
+  </div>
+  <div class="grid journey reveal">
+    <div class="stage">
+      <div class="node">01</div>
+      <div class="card"><h3>Understand My Options</h3>
+        <dl class="kv" style="margin-top:.8vh"><dt>Do</dt><dd>Answer a few simple questions → Instantly know whether a repayment plan is possible.</dd><dt>Feel</dt><dd>“I understand my options and what happens next.”</dd><dt>Fixes</dt><dd>Uncertainty about eligibility and why information is required.</dd></dl></div>
+    </div>
+    <div class="stage">
+      <div class="node">02</div>
+      <div class="card"><h3>Find a Sustainable Plan</h3>
+        <dl class="kv" style="margin-top:.8vh"><dt>Do</dt><dd>Explore an affordable repayment amount → Choose a plan I can realistically keep.</dd><dt>Feel</dt><dd>“This fits my financial situation.”</dd><dt>Fixes</dt><dd>Fear of committing to an unaffordable monthly payment.</dd></dl></div>
+    </div>
+    <div class="stage misery">
+      <div class="node">03</div><span class="flag">Moment of misery</span>
+      <div class="card"><h3>Commit with Confidence</h3>
+        <dl class="kv" style="margin-top:.8vh"><dt>Do</dt><dd>Confirm the repayment plan → Understand the commitment and its consequences.</dd><dt>Feel</dt><dd>“I'm confident this is the right decision.”</dd><dt>Fixes</dt><dd>The moment they have to commit to a monthly repayment amount without knowing whether they can realistically afford it or what will happen if they get it wrong.</dd></dl></div>
+    </div>
+    <div class="stage">
+      <div class="node">04</div>
+      <div class="card"><h3>Stay on Track</h3>
+        <dl class="kv" style="margin-top:.8vh"><dt>Do</dt><dd>Start the repayment plan → Successfully keep the agreement without agent support.</dd><dt>Feel</dt><dd>“I feel in control and know what to expect.”</dd><dt>Fixes</dt><dd>Failed repayment plans, unnecessary agent contacts, and misleading SSR success.</dd></dl></div>
+    </div>
+  </div>
+  <div class="foot"><span>Module 2 · Competitive analysis &amp; journey map</span><span>06 · Research</span></div>
+</section>
+
+<!-- 07 · BLUEPRINT -->
+<section id="blueprint" data-label="Blueprint">
+  <div class="head reveal">
+    <div><div class="eyebrow">Slide 7 · Blueprint</div><h2>Scope the date, <em>not the dream</em>.</h2></div>
+    <p>“Now” feature: Payday alignment. Persona: a consumer with limited time and an uncertain income.</p>
+  </div>
+
+  <div class="grid s7 reveal">
+    <div class="card" style="display:flex;flex-direction:column;gap:1vh">
+      <div class="label"><i></i>MoSCoW · Payday alignment scope</div>
+      <div class="grid moscow fill">
+        <div class="col must">
+          <div class="h"><span>Must</span><span>3</span></div>
+          <div class="item"><b>1 · Capture income date</b>The consumer must be able to provide their regular payday or benefit payment date. Without this information, the repayment schedule cannot reflect their financial reality.</div>
+          <div class="item"><b>2 · Recommend aligned payment date</b>The system must recommend a repayment date aligned with the consumer's income. Simply collecting the income date without acting on it does not solve the core problem.</div>
+          <div class="item"><b>5 · Explain repayment timing</b>The journey must explain why a payment date is recommended and how it supports a sustainable repayment plan.</div>
+        </div>
+        <div class="col should">
+          <div class="h"><span>Should</span><span>1</span></div>
+          <div class="item"><b>6 · Measure behavioural impact</b>Track payment date selection, completion rate, agent contacts, and missed-payment rate to evaluate the feature after launch. <span class="tag">Demoted from Must: important for optimisation but not required for the initial user experience.</span></div>
+        </div>
+        <div class="col could">
+          <div class="h"><span>Could</span><span>–</span></div>
+          <div class="placeholder">No “Could” items specified for this release</div>
+        </div>
+        <div class="col wont">
+          <div class="h"><span>Won't</span><span>1</span></div>
+          <div class="item"><b>First-payment trial (#8)</b><span class="tag">Cut: the “no” protecting the scope.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-rows:auto auto 1fr">
+      <div class="card hero key">
+        <div class="label"><i></i>Roadmap · “Now” lane, this sprint</div>
+        <ol class="steps small">
+          <li>Sustainable default (#2)</li>
+          <li class="hot">Low-month confidence check (#3) <span class="pill" style="margin-left:6px;padding:2px 8px">Quick win</span></li>
+          <li>Guided 60-second chooser (#1)</li>
+        </ol>
+        <div class="pills" style="margin-top:1.6vh">
+          <a class="btn" href="https://github.com/WaldemarBrunkov/pm-final-project/blob/main/04-roadmap/payday-alignment-prototype.html" target="_blank" rel="noopener">View prototype
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+          <a class="btn ghost" href="https://github.com/WaldemarBrunkov/pm-final-project/blob/main/04-roadmap/bu-collection-roadmap.html" target="_blank" rel="noopener">Roadmap ↗</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="label"><i style="background:var(--cyan)"></i>Where the AI underweighted evidence</div>
+        <div style="display:flex;gap:1.2vw;align-items:center">
+          <div><div class="metric c-cyan">32.8%</div><div class="xs">of drop-offs at income proof upload</div></div>
+          <div><div class="metric c-pink">21%</div><div class="xs">of agent contacts: missing documents</div></div>
+        </div>
+        <p class="xs" style="margin-top:.8vh">Features that simplify or replace the document upload process should receive higher priority.</p>
+      </div>
+      <div class="card">
+        <div class="label"><i style="background:var(--violet)"></i>PRD highlights</div>
+        <p class="small"><strong class="c-violet">Made explicit:</strong> the goal is to increase consumer confidence by aligning repayments with income timing and measuring success through sustainable self-service outcomes, not just feature delivery.</p>
+        <p class="small"><strong class="c-orange">Prototype gap:</strong> the journey contained too many sequential steps. I updated the PRD to simplify the journey by combining related interactions and reducing the number of decisions required before commitment.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Module 4 · Roadmap, PRD &amp; prototype</span><span>07 · Blueprint</span></div>
+</section>
+
+<!-- 08 · VALIDATION -->
+<section id="validation" data-label="Validation">
+  <div class="head reveal">
+    <div><div class="eyebrow">Slide 8 · Validation</div><h2>A/B test: <em>Payday alignment</em>.</h2></div>
+    <p>Read date fixed at the end of 30 days. No results reviewed before this date.</p>
+  </div>
+
+  <div class="grid s8a reveal">
+    <div class="card hero key">
+      <div class="label"><i></i>Hypothesis</div>
+      <p style="line-height:1.85">I believe that <span class="slot">Payday alignment</span> for <span class="slot c">Mara: financially constrained consumers with variable income who want to resolve their debt through self-service</span> will result in <span class="slot t">consumers committing to an instalment plan on their own, because the first payment lands after their payday</span>, as measured by a <span class="slot">9% change</span> in the % of consumers who complete a self-service instalment plan without contacting an agent within 7 days, within <span class="slot">30 days</span>. We will protect <span class="slot p">missed payments within 60 days ≤ 19%</span> throughout the test.</p>
+    </div>
+    <div class="card">
+      <div class="label"><i style="background:var(--cyan)"></i>Parameters</div>
+      <div class="grid stats">
+        <div class="stat"><div class="metric c-cyan">~32%</div><div class="cap">Baseline (estimate, likely 32–40%)</div></div>
+        <div class="stat"><div class="metric c-teal">~37%</div><div class="cap">Target · +15% relative</div></div>
+        <div class="stat"><div class="metric c-orange">9%</div><div class="cap">Minimum detectable effect</div></div>
+        <div class="stat"><div class="metric c-pink">≤19%</div><div class="cap">Guardrail · missed payment ≤ 60 days</div></div>
+        <div class="stat"><div class="metric">4,100</div><div class="cap">Sample size per arm</div></div>
+        <div class="stat"><div class="metric">50/50</div><div class="cap">Traffic split</div></div>
+        <div class="stat"><div class="metric">30<small>days</small></div><div class="cap">Test duration</div></div>
+        <div class="stat"><div class="metric">5%</div><div class="cap">Significance threshold</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid s8b reveal">
+    <div class="card arm">
+      <span class="badge" style="background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.45)">Control · A</span>
+      <p class="small">Consumers go through the existing flow: choose a monthly amount, provide income information and upload proof of income, then see a plan summary (amount, first payment date, frequency), review and confirm. The first payment date is set by the system as today, without asking when the consumer's income arrives and without explaining why this date was chosen.</p>
+      <p class="xs" style="opacity:.85">Not included: income-timing question, recommended first payment date, explanation of the payment date.</p>
+    </div>
+    <div class="card arm" style="border-color:rgba(251,146,60,.6)">
+      <span class="badge" style="background:var(--orange);color:#07162C">Variant · B</span>
+      <p class="small">Same journey as Control (A), with one change: the first payment date is aligned with the consumer's payday. Before the plan summary, consumers answer “When do you usually receive your income?” (day of the month, or End of month / Middle of month / Every 4 weeks). The system recommends a first payment date 2 days after the next income date and at least 5 days from today; otherwise it uses the following income cycle, with a short, plain-language explanation of why it was chosen.</p>
+    </div>
+  </div>
+
+  <div class="grid s8c reveal">
+    <div class="card rule ship key"><div class="label"><i style="background:var(--teal)"></i>Rule</div><div class="verdict">Ship</div><p class="xs">if the primary metric improves by ≥ 9% at 5% significance and missed payments within 60 days remain ≤ 19% after 30 days.</p></div>
+    <div class="card rule iter key"><div class="label"><i style="background:var(--blue)"></i>Rule</div><div class="verdict">Iterate</div><p class="xs">if direction is positive but lift is below the MDE.</p></div>
+    <div class="card rule kill key"><div class="label"><i style="background:var(--pink)"></i>Rule</div><div class="verdict">Kill</div><p class="xs">if the primary metric shows no improvement or moves negatively.</p></div>
+    <div style="display:flex;flex-direction:column;gap:.8vh;justify-content:center">
+      <div class="placeholder">Second guardrail · not specified</div>
+      <div class="placeholder">Held constant (isolation check) · not filled in</div>
+    </div>
+  </div>
+  <div class="foot"><span>Experiment brief · Riverty business-unit case</span><span>08 · Validation</span></div>
+</section>
+
+<!-- 09 · LAUNCH -->
+<section id="launch" data-label="Launch">
+  <div class="head reveal">
+    <div><div class="eyebrow">Slide 9 · Launch</div><h2>GTM is <em>governance</em> here.</h2></div>
+    <p>An in-journey change tested as an A/B experiment, not a market launch.</p>
+  </div>
+
+  <div class="grid s9 reveal">
+    <div class="card hero key" style="display:flex;flex-direction:column;gap:1.4vh">
+      <div class="label"><i></i>GTM strategy</div>
+      <dl class="gtm">
+        <dt>Goal</dt><dd><strong class="c-orange" style="font-family:var(--head);font-size:1.15em">Conversion</strong>, self-service plans without agent contact within 7 days from ~32% to ~37%.</dd>
+        <dt>Tier</dt><dd><span class="pill">M · Targeted</span> &nbsp;targeted internal comms, no external outreach.</dd>
+        <dt>Audience</dt><dd>Consumers in collection who start the instalment journey in the self-service portal, cannot pay in full and have variable or irregular income (persona Mara). Reached in-product only.</dd>
+        <dt>Internal</dt><dd><div class="pills"><span class="pill b">Contact centre</span><span class="pill b">Risk / Collections</span><span class="pill b">Finance</span><span class="pill b">Client management</span><span class="pill b">Legal &amp; DPO</span></div></dd>
+        <dt>Channels</dt><dd><div class="pills"><span class="pill">In-product journey</span><span class="pill c">Contact-centre enablement</span><span class="pill v">Internal stakeholder channel</span></div></dd>
+        <dt>Budget</dt><dd>No external spend. Internal cost only.</dd>
+        <dt>Owner</dt><dd>Waldemar Brunkov, PM</dd>
+      </dl>
+    </div>
+
+    <div class="grid" style="grid-template-rows:auto auto auto">
+      <div class="grid dash">
+        <div class="card tile key">
+          <div class="label"><i style="background:var(--teal)"></i>Primary</div>
+          <div class="metric c-teal">32→37<small>%</small></div>
+          <div class="cap">Starters completing a self-service plan with no agent contact within 7 days</div>
+          <div class="bar"><span style="width:32%;background:rgba(255,255,255,.35)"></span><span style="width:37%;background:linear-gradient(90deg,transparent 86%,var(--teal) 86%)"></span></div>
+          <div class="bar-legend"><span>Ship: 95% CI lower bound &gt; 0</span></div>
+        </div>
+        <div class="card tile key">
+          <div class="label"><i style="background:var(--pink)"></i>Plan health</div>
+          <div class="metric c-pink">≤ +3<small>pp</small></div>
+          <div class="cap">Missed payment among the first two instalments, B − A</div>
+          <div class="bar"><span style="width:70%;background:linear-gradient(90deg,rgba(52,211,153,.6),rgba(244,114,182,.7))"></span><i class="mark" style="left:70%"></i></div>
+          <div class="bar-legend"><span>One-sided 95% upper bound</span></div>
+        </div>
+        <div class="card tile key">
+          <div class="label"><i style="background:var(--cyan)"></i>Cash</div>
+          <div class="metric c-cyan">≥ 0.95</div>
+          <div class="cap">Collected per starter from the first two instalments, B / A</div>
+          <div class="bar"><span style="width:95%;background:linear-gradient(90deg,rgba(34,211,238,.25),var(--cyan))"></span><i class="mark" style="left:95%"></i></div>
+          <div class="bar-legend"><span>One-sided 80% lower bound</span></div>
+        </div>
+      </div>
+      <div class="callout pink">
+        <div class="label"><i style="background:var(--pink)"></i>Bad signal to watch for</div>
+        <p class="small">7-day agent contacts fall, but contacts within 45 days rise: calls were shifted past the window, not removed. Also: drop-off at the income-timing screen &gt; 5 pp, or most consumers overriding the recommended date.</p>
+      </div>
+      <div class="card">
+        <div class="label"><i style="background:var(--blue)"></i>Likely post-launch decision · <span class="c-blue">Iterate</span></div>
+        <p class="xs">Trigger: at readout 1 (16 Dec) the lift is positive but not significant and the CI still includes the MDE (+2.7 pp), guardrails hold → revert to A, test the next version (e.g. combined with the low-month confidence check).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="ms go"><b>Fri 23 Oct</b>Go/no-go meeting, written sign-offs</div>
+    <div class="ms go"><b>Mon 26 Oct</b>Variant live for 50% of journey starters</div>
+    <div class="ms"><b>Wed 16 Dec</b>Primary readout: Kill, Iterate or Provisional Go</div>
+    <div class="ms"><b>Mon 15 Feb</b>Interim plan-health check</div>
+    <div class="ms"><b>Mon 15 Mar</b>Guardrail readout, then rollout or revert</div>
+  </div>
+  <div class="foot"><span>GTM launch plan · Riverty business-unit case</span><span>09 · Launch</span></div>
+</section>
+
+<!-- 10 · STORY -->
+<section id="story" data-label="Story">
+  <div class="head reveal">
+    <div><div class="eyebrow">Slide 10 · Story</div><h2>What I'd tell the <em>next PM</em>.</h2></div>
+  </div>
+
+  <div class="grid s10 reveal">
+    <div class="grid" style="grid-template-rows:auto 1fr">
+      <div class="card">
+        <div class="label"><i style="background:var(--pink)"></i>Friction point</div>
+        <p class="small">The hardest part was letting go of the standard GTM template. Audience, channels and tier all pushed me toward awareness and outreach, but Payday Alignment is an in-journey A/B test. A campaign would add nothing and would bias who enters the test.</p>
+        <p class="small">What surprised me in the review: my reach number was off (≈5,800 consumers in the variant, not 4,180), my €3.8M value case wasn't something the primary metric could prove, and “no external outreach” wasn't true because client management has to talk to creditors.</p>
+      </div>
+      <div class="card hero key" style="display:flex;flex-direction:column;justify-content:center;gap:1.4vh">
+        <div class="label"><i></i>Aha moment</div>
+        <p class="aha">For an experiment, GTM is <em>governance and measurement integrity</em>.</p>
+        <p class="small">The riskiest “channel” isn't the consumer touchpoint but the contact centre. If agents override the recommended date or mis-tag contacts, the primary metric breaks. Launch readiness means signed thresholds, a written decision rule and stop rules, not reach.</p>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-rows:1fr auto">
+      <div class="card">
+        <div class="label"><i style="background:var(--teal)"></i>Key takeaways</div>
+        <ol class="take small">
+          <li><span><strong>Start from the goal, not the template.</strong> If the goal is conversion inside the journey, the audience is whoever is in the journey and the GTM work is internal.</span></li>
+          <li><span><strong>Every number a stakeholder will quote needs a metric that proves it.</strong> I'd split the value case into cost-to-serve savings (measured directly) and incremental recovery (needs its own secondary metric).</span></li>
+          <li><span><strong>A bad signal only counts if it has a threshold, an owner and an action.</strong> A lagging check like 45-day contacts isn't an early warning.</span></li>
+        </ol>
+      </div>
+      <div class="callout cyan">
+        <div class="label"><i style="background:var(--cyan)"></i>What I'd do next</div>
+        <p class="small">Get Legal/DPO's answer on whether a DPIA is needed (the biggest risk to the 26 Oct date), assign a builder and date to each open asset, and get the decision rule and stop rules signed at the go/no-go on 23 Oct.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Reflection</span><span>10 · Story</span></div>
+</section>
+
+<!-- THANK YOU -->
+<section class="thanks" id="submit" data-label="Submit">
+  <div class="reveal">
+    <div class="eyebrow" style="margin-bottom:1.6vh">Final Project · Submission</div>
+    <h2>Thank you<span>.</span></h2>
+  </div>
+  <div class="reveal" style="display:flex;flex-direction:column;gap:1.4vh">
+    <div class="label" style="margin:0"><i style="background:var(--cyan)"></i>Repository</div>
+    <a class="repo" href="https://github.com/WaldemarBrunkov/pm-final-project" target="_blank" rel="noopener">https://github.com/WaldemarBrunkov/pm-final-project</a>
+  </div>
+  <div class="pills reveal">
+    <span class="pill">Waldemar Brunkov</span>
+    <span class="pill c">#Cohort-1</span>
+    <span class="pill t">Payday Alignment</span>
+    <span class="pill v">Riverty · BU Collection</span>
+  </div>
+  <div class="reveal" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+    <span class="submit"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>Submit to the learning platform</span>
+    <a class="btn ghost" href="https://github.com/WaldemarBrunkov/pm-final-project/blob/main/04-roadmap/payday-alignment-prototype.html" target="_blank" rel="noopener">View prototype ↗</a>
+  </div>
+  <div class="foot"><span>Product School · PM Certification</span><span>08 / 08</span></div>
+</section>
+
+<script>
+(function(){
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section'));
+  var dots = document.getElementById('dots');
+  var bar = document.getElementById('bar');
+  var links = sections.map(function(s, i){
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#' + s.id;
+    a.setAttribute('data-label', s.getAttribute('data-label'));
+    a.setAttribute('aria-label', 'Go to ' + s.getAttribute('data-label'));
+    a.addEventListener('click', function(e){ e.preventDefault(); go(i); });
+    li.appendChild(a); dots.appendChild(li);
+    return a;
+  });
+
+  function current(){
+    var mid = window.scrollY + window.innerHeight / 2, idx = 0;
+    sections.forEach(function(s, i){ if (s.offsetTop <= mid) idx = i; });
+    return idx;
+  }
+  function go(i){
+    i = Math.max(0, Math.min(sections.length - 1, i));
+    sections[i].scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function update(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+    var c = current();
+    links.forEach(function(a, i){ a.classList.toggle('active', i === c); });
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting) e.target.classList.add('in'); });
+  }, {threshold:0.25});
+  sections.forEach(function(s){ io.observe(s); });
+
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+  document.addEventListener('keydown', function(e){
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var c = current();
+    switch (e.key) {
+      case 'ArrowDown': case 'PageDown': e.preventDefault(); go(c + 1); break;
+      case 'ArrowUp': case 'PageUp': e.preventDefault(); go(c - 1); break;
+      case ' ': case 'Spacebar': e.preventDefault(); go(e.shiftKey ? c - 1 : c + 1); break;
+      case 'Home': e.preventDefault(); go(0); break;
+      case 'End': e.preventDefault(); go(sections.length - 1); break;
+      case 'Escape': if (document.activeElement) document.activeElement.blur(); go(0); break;
+    }
+  });
+  update();
+})();
+</script>
+</body>
+</html>
